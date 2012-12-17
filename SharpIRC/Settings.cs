@@ -158,5 +158,10 @@ namespace SharpIRC {
         /// Admin login password.
         /// </summary>
         public string Password { get; set; }
+
+        /// <summary>
+        /// Whether or not this is the current owner of the bot.
+        /// </summary>
+        [XmlAttribute("ID")] public bool Owner { get; set; }
     }
 }

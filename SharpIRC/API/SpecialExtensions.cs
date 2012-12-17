@@ -69,7 +69,16 @@ namespace SharpIRC.API {
         /// </summary>
         /// <param name="nick">An IRCUser object.</param>
         /// <returns>Whether or not the user is an admin.</returns>
-        public static bool IsBotAdmin(this IRCUser nick) { return Program.LoggedIn.Any(user => user == nick.Nick); }
+        public static bool IsBotAdmin(this IRCUser nick) { return Program.LoggedIn.Any(user => user.Username == nick.Nick); }
+
+        /// <summary>
+        /// Returns true if the specified user is currently specified as the bot owner.
+        /// </summary>
+        /// <param name="nick">An IRCUser object.</param>
+        /// <returns></returns>
+        public static bool IsBotOwner(this IRCUser nick) {
+            return Program.LoggedIn.Any(user => user.Username == nick.Nick && user.Owner);
+        }
 
         /// <summary>
         /// Searches the nicklist for users on the network matching the string.

@@ -54,7 +54,7 @@ namespace SharpIRC {
         /// <summary>
         /// 
         /// </summary>
-        public static List<string> LoggedIn = new List<string>();
+        public static List<Admin> LoggedIn = new List<Admin>();
 
         /// <summary>
         /// Writes a "comment" to console.
@@ -113,6 +113,11 @@ namespace SharpIRC {
                     Connect.PrintError("Found deprecated addins folder, SharpIRC now utilize the \"Plugins\" folder, automatically deleting..");
                     var directory = new DirectoryInfo(StartupPath + Path.DirectorySeparatorChar + "Addins");
                     directory.Empty();
+                }
+                if (GlobalSettings.Admins.Count(admin => admin.Owner) > 1) {
+                    Connect.PrintError("Multiple bot owners are defined in configuration file and SharpIRC cannot proceed.");
+                    Console.ReadLine();
+                    Environment.Exit(0);
                 }
                 Comment("Loading plugins..");
                 LoadPlugins();

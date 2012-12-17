@@ -143,7 +143,7 @@ namespace SharpIRC {
                     var username = message.Message.Split(' ')[1];
                     var password = message.Message.Split(' ')[2];
                     foreach (Admin admin in Program.GlobalSettings.Admins.Where(admin => username == admin.Username && password == admin.Password)) {
-                        Program.LoggedIn.Add(message.Sender.Nick);
+                        Program.LoggedIn.Add(admin);
                         Commands.SendPrivMsg(message.Connection, message.Sender.Nick, "You have authenticated as \"" + admin.Username + "\" and are now signed in as an administrator. . Your session will end in 60 minutes or when you quit.");
                         if (!Program.GlobalSettings.DisableSessionTimer) SessionTimer(message.Connection, message.Sender.Nick);
                         Program.Sessions.Add(message.Sender.Nick);
@@ -190,7 +190,7 @@ namespace SharpIRC {
             {
                 Thread.Sleep(3600000);
                 var templogin = Program.LoggedIn.ToList();
-                foreach (string user in templogin.Where(user => user == nick))
+                foreach (Admin user in templogin.Where(user => user.Username == nick))
                 {
                     Program.LoggedIn.Remove(user);
                     Commands.SendPrivMsg(connection, nick, String.Format("Your 60 minute admin session has ended. \"/msg {0} login <Username> <Password>\" to log in again.", connection.CurrentNick));

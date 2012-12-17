@@ -29,7 +29,7 @@
   <!-- This is the bot administrator/superuser section. Please enter a lowercase username that will be used when logging in,
   and a strong password. You may add additional administrators by copying the "<admin></admin> section and pasting it over beneath. -->
   <Admins>
-    <Admin>
+    <Admin Owner="true">
       <Username>smith</Username>
       <Password>6_QfFfeZt0yeqf#9+?u6v7Z4YQK</Password>
     </Admin>
