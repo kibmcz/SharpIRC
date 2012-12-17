@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<!-- This is the main configuration file for SharpIRC. It is absolutely vital to configure this before your first startup. -->
+<Settings xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <!-- Enter the ASCII character code for what you want as your command prefix. i.e for "!google" your prefix would be ! or "33"
+  To find out what the ASCII character code for the character you want is, visit http://www.asciitable.com/ -->
+  <CommandPrefix>33</CommandPrefix>
+  
+  <!-- Whether or not to log all messages that are not server traffic to file. -->
+  <LogComments>true</LogComments>
+  
+  <!-- Whether or not to automatically reload configuration files and database files as they are changed externally. -->
+  <AutomaticConfigurationReload>false</AutomaticConfigurationReload>
+  
+  <!-- If set to true, the 60 minute timer that automatically signs out administrators will be disabled and they will remain logged in until they quit. -->
+  <DisableSessionTimer>false</DisableSessionTimer>
+  
+  <!-- Enables a 15 second delay after a successful connection has been acheived where the bot will not pass on ChanMsg ChanAction and ChanNotice events to plugins. -->
+  <StartupDelay>false</StartupDelay>
+  
+  <!-- Splits and sends channel messages in bulks of 420 characters to avoid command output from being cut off by server. -->
+  <SplitCommandOutput>true</SplitCommandOutput>
+  
+  <!-- Log server traffic to file in a chat-history style format. Seperated by user and channel. -->
+  <ChatHistory>false</ChatHistory>
+  
+  <!-- This is the bot administrator/superuser section. Please enter a lowercase username that will be used when logging in, and a strong password. You may add additional administrators by copying the "<admin></admin> section and pasting it over beneath. -->
+  <Admins>
+    <Admin>
+      <Username>smith</Username>
+      <Password>6_QfFfeZt0yeqf#9+?u6v7Z4YQK</Password>
+    </Admin>
+    <Admin>
+      <Username>john</Username>
+      <Password>qu)LV8cX)oBqPizz5$pXekj</Password>
+    </Admin>
+  </Admins>
+  <!-- This is the network configuration section. Each network is distiungished using a GUID (Globally Unique Identifier). For each network you will need to generate a GUID and insert it into the "ID" field here. You may generate a new GUID at http://www.guidgenerator.com/ -->
+  <Networks>
+    <Network ID="D1492784-9F12-4F4B-8D80-22B6800E3FC0">
+      <!-- Whether or not SharpIRC should automatically connect to this network on startup. -->
+      <AutoConnect>true</AutoConnect>
+      <!-- The identd/username to use. This would be the part you want before the @ in your hostname. -->
+      <Ident>SharpIRC</Ident>
+      <!-- The default nickname to use when connecting to the network. -->
+      <Nick>SharpIRC</Nick>
+      <!-- The 'Real Name' to use on the network. -->
+      <RealName>Sharp IRC Bot</RealName>
+      <!-- The name of the user authentication service in use by the network. On most networks this is called 'NickServ' if it isn't; change it below. -->
+      <AuthenticationService>NickServ</AuthenticationService>
+      <!-- The password to use when authenticating your nickname with the authentication service. -->
+      <NickServPass>uY8DSIQvDVD4dMAJmUklodYw</NickServPass>
+      <!-- The IRC server address/domain to connect to. -->
+      <Address>irc.myircnetwork.com</Address>
+      <!-- The port that should be used to connect to the server, the standard IRC port is 6667. NOTE: SharpIRC does NOT support SSL connections at this time, this feature might be implemented in the future. -->
+      <ServerPort>6667</ServerPort>
+      <!-- The bot management channel. This channel will be connected to instantly on connect. You may use this channel to manage your bot, or just to setup your auto-join list for the first time. When you no longer need it, change this field back to blank. -->
+      <SetupChannel></SetupChannel>
+      <!-- The message that should be used by the bot when a quit is initiated. -->
+      <QuitMessage>
+        SharpIRC C# Bot Client by NasuTek http://nasutek.com/
+      </QuitMessage>
+      
+      <!-- This is the global filter. Some networks are stricter than others, and there are some things you may not want your bot to say, to avoid trouble and to keep peace. You may leave this list empty, or add as many items as you wish, in the same style as shown below. -->
+      <Filter>
+        <string>nigger</string>
+        <string>fag</string>
+      </Filter>
+    </Network>
+  </Networks>
+</Settings>

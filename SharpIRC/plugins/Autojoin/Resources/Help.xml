@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpAddin Name="Autojoin" AdminOnly="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Description>Controls what channels are automatically joined when a connection is established</Description>
+  <Commands>
+    <CMD Type="Name">
+      <Command>autojoin add</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Adds a channel to the list of channels that will be automatically joined when a connection is established.</Description>
+      <Syntax>autojoin add $channel name$</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>autojoin list</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Displays a ist of the channels that will be automatically joined when a connection is established.</Description>
+      <Syntax>autojoin list</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>autojoin del</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Removes a channel from the list of channels that will be automatically joined when a connection is established.</Description>
+      <Syntax>autojoin del $channel name$</Syntax>
+    </CMD>
+
+    <CMD Type="Query">
+      <Command>autojoin add</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Adds a channel to the list of channels that will be automatically joined when a connection is established.</Description>
+      <Syntax>autojoin add $channel name$</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>autojoin list</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Displays a ist of the channels that will be automatically joined when a connection is established.</Description>
+      <Syntax>autojoin list</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>autojoin del</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Removes a channel from the list of channels that will be automatically joined when a connection is established.</Description>
+      <Syntax>autojoin del $channel name$</Syntax>
+    </CMD>
+  </Commands>
+</HelpAddin>

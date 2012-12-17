@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<HelpAddin Name="Google Services" AdminOnly="false" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Description>Provides essentials features like administration login, nickserv identification, etc..</Description>
+  <Commands>
+    <CMD Type="Channel">
+      <Command>calc</Command>
+      <Permisson>Normal</Permisson>
+      <Description>Performs a calculation of a math problem, or conversion of all sorts of units, like length, volume, time, temperature, currency, and more.</Description>
+      <Syntax>calc $request$</Syntax>
+    </CMD>
+    <CMD Type="Channel">
+      <Command>define</Command>
+      <Permisson>Normal</Permisson>
+      <Description>Looks up a definition in Google Dictionairy.</Description>
+      <Syntax>define $word$</Syntax>
+    </CMD>
+    <CMD Type="Channel">
+      <Command>weather</Command>
+      <Permisson>Normal</Permisson>
+      <Description>Looks up the weather forecast for the given location. (City/Zip Code)</Description>
+      <Syntax>weather $location$</Syntax>
+    </CMD>
+    <CMD Type="Channel">
+      <Command>market</Command>
+      <Permisson>Normal</Permisson>
+      <Description>Looks up a the current NASDAQ stock values of the company.</Description>
+      <Syntax>market $NASDAQ code$</Syntax>
+    </CMD>
+  </Commands>
+</HelpAddin>

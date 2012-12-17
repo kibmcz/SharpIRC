@@ -1,0 +1,144 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<HelpAddin Name="Essentials" AdminOnly="true" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Description>Provides essentials features like administration login, nickserv identification, etc..</Description>
+  <Commands>
+    <CMD Type="Name">
+      <Command>raw</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Sends RAW IRC data to the active server.</Description>
+      <Syntax>raw $IRC Data$</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>say</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Sends a PRIVMSG (Normal Message) to a channel or user.</Description>
+      <Syntax>say $Name$ $Message$</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>act</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Sends a CTCP ACTION (/me) to a channel or user.</Description>
+      <Syntax>act $Name$ $Message$</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>rejoin</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Rejoins a channel, if no channel is entered; the active channel will be rejoined.</Description>
+      <Syntax>rejoin $channel$</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>restart</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Completely shuts down the application and starts a new instance.</Description>
+      <Syntax>restart</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>nick</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Changes the nickname of the bot on the active network.</Description>
+      <Syntax>nick $new nickname$</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>quit</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Completely shuts down the application.</Description>
+      <Syntax>quit</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>reconnect</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Disconnects from the active network and establishes a new connection with settings from the configuration file.</Description>
+      <Syntax>reconnect</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>ignore add</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Makes a user or hostname completely ignored by all plugins; so that they may no longer utilize bot functions.</Description>
+      <Syntax>ignore add $user/hostname$</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>ignore list</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Displays a list of those who will be completely ignored by all plugins.</Description>
+      <Syntax>ignore list</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>ignore del</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Removes a user or hostname from the list of those who will be completely ignored by all plugins.</Description>
+      <Syntax>ignore add $user/hostname$</Syntax>
+    </CMD>
+  
+    <CMD Type="Query">
+      <Command>raw</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Sends RAW IRC data to the active server.</Description>
+      <Syntax>raw $IRC Data$</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>say</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Sends a PRIVMSG (Normal Message) to a channel or user.</Description>
+      <Syntax>say $Name$ $Message$</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>act</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Sends a CTCP ACTION (/me) to a channel or user.</Description>
+      <Syntax>act $Name$ $Message$</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>rejoin</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Rejoins a channel, if no channel is entered; the active channel will be rejoined.</Description>
+      <Syntax>rejoin $channel$</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>restart</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Completely shuts down the application and starts a new instance.</Description>
+      <Syntax>restart</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>nick</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Changes the nickname of the bot on the active network.</Description>
+      <Syntax>nick $new nickname$</Syntax>
+    </CMD>
+    <CMD Type="Name">
+      <Command>quit</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Completely shuts down the application.</Description>
+      <Syntax>quit</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>reconnect</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Disconnects from the active network and establishes a new connection with settings from the configuration file.</Description>
+      <Syntax>reconnect</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>ignore add</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Makes a user or hostname completely ignored by all plugins; so that they may no longer utilize bot functions.</Description>
+      <Syntax>ignore add $user/hostname$</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>ignore list</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Displays a list of those who will be completely ignored by all plugins.</Description>
+      <Syntax>ignore list</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>ignore del</Command>
+      <Permisson>Admin</Permisson>
+      <Description>Removes a user or hostname from the list of those who will be completely ignored by all plugins.</Description>
+      <Syntax>ignore add $user/hostname$</Syntax>
+    </CMD>
+    <CMD Type="Query">
+      <Command>login</Command>
+      <Permission>Admin</Permission>
+      <Syntax>login $username$ $password$</Syntax>
+    </CMD>
+  </Commands>
+</HelpAddin>

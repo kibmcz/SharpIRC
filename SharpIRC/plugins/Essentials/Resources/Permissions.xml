@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<PermissionIndex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Commands>
+    <Command Name="raw">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="log">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="say">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="act">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="rejoin">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="restart">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="nick">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="quit">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="reconnect">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="ignore add">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="ignore del">
+      <Permissions Type="Admin" />
+    </Command>
+    <Command Name="ignore list">
+      <Permissions Type="Admin" />
+    </Command>
+  </Commands>
+</PermissionIndex>

@@ -1,0 +1,12 @@
+syntax: glob
+obj
+bin
+*.user
+*.suo
+_ReSharper*
+*.pidb
+*.pdb
+*.manifest
+Bin
+*.vs10x
+*.ReSharper
