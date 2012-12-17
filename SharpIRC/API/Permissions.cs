@@ -8,13 +8,13 @@ using System.Xml.Serialization;
 
 namespace SharpIRC.API
 {
+    /// <summary>
+    /// The class that handles command permissions.
+    /// </summary>
     public static class Permissions {
         public static List<PermissionIndex> PermissionsList;
 
         public static List<PermissionIndex> LoadPermissionsData() {
-            var x = new PermissionIndex() { Commands = new List<Command>() { new Command() { Name = "TestPermission", Permissions = new List<Permission>
-                       {new Permission() {Channel = "#kteck-labs", NetworkUUID = "010010101", Type = "Nick", Value = "lol"}}}}};
-            ConfigurationAPI.SaveConfigurationFile(x, "testXMLPErmissions");
             return AppDomain.CurrentDomain.GetAssemblies().Select(asm => asm.GetManifestResourceStream(asm.GetName().Name + ".Resources.Permissions.xml")).Select(DeserializePermissionsFile).Where(addin => addin != null).ToList();
         }
 

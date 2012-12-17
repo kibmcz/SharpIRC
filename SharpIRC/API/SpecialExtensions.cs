@@ -37,9 +37,7 @@ namespace SharpIRC.API {
         /// <param name="name">IRC Network name.</param>
         /// <returns>An IRC Connection object.</returns>
         public static IRCConnection GetConnectionByName(this string name) {
-            IRCConnection conn = null;
-            foreach (IRCConnection con in Program.Connections.Where(con => con.ActiveNetwork == name)) conn = con;
-            return conn;
+            return Program.Connections.FirstOrDefault(con => con.ActiveNetwork == name);
         }
 
         /// <summary>
@@ -48,11 +46,15 @@ namespace SharpIRC.API {
         /// <param name="ID">Unique ID (GUID)</param>
         /// <returns>An IRC Connection object.</returns>
         public static IRCConnection GetConnectionByGUID(this Guid ID) {
-            IRCConnection conn = null;
-            foreach (IRCConnection con in Program.Connections.Where(con => con.NetworkConfiguration.ID == ID)) conn = con;
-            return conn;
+            return Program.Connections.FirstOrDefault(con => con.NetworkConfiguration.ID == ID);
         }
 
+        /// <summary>
+        /// Searches for open IRC channels to find a channel with the matching name.
+        /// </summary>
+        /// <param name="conn">IRC Connection</param>
+        /// <param name="mChannel">Channel name</param>
+        /// <returns>IRC Channel object.</returns>
         public static Channel GetChannelByName(this IRCConnection conn, string mChannel) {
             return conn.Channels.FirstOrDefault(channel => channel.Name == mChannel);
         }

@@ -22,6 +22,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using System.Xml.Serialization;
+using SharpIRC.Properties;
 
 namespace SharpIRC {
     /// <summary>
@@ -115,7 +116,7 @@ namespace SharpIRC {
         public string AuthenticationPassword {
             get {
                 var xy = new StackTrace().GetFrame(1).GetMethod().ReflectedType.ToString();
-                new Thread(() => MessageBox.Show(xy + " has acceessed your authentication password.", "Sensitive data has been accessed.", MessageBoxButtons.OK, MessageBoxIcon.Warning)).Start();
+                new Thread(() => MessageBox.Show(xy + Resources.acceessed_your_authentication_password, Resources.Sensitive_data_has_been_accessed_, MessageBoxButtons.OK, MessageBoxIcon.Warning)).Start();
                 return _authpassword;
             }
             set { _authpassword = value; }
