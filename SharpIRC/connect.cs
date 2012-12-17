@@ -171,7 +171,7 @@ namespace SharpIRC {
                                     break;
                                 case "376":
                                 case "422":
-                                    if (connection.NetworkConfiguration.IdentifyOnConnect) SendToServer(connection,"NICKSERV IDENTIFY " + connection.NetworkConfiguration.NickServPass);
+                                    if (connection.NetworkConfiguration.IdentifyOnConnect) SendToServer(connection,"NICKSERV IDENTIFY " + connection.NetworkConfiguration.AuthenticationPassword);
                                     Commands.SendModes(connection, connection.CurrentNick, "+B");
                                     if (connection.NetworkConfiguration.SetupChannel.Length > 0) Commands.SendJoin(connection, connection.NetworkConfiguration.SetupChannel);
                                     new Events().Connected(connection);

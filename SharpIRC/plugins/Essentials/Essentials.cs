@@ -175,11 +175,11 @@ namespace SharpIRC {
                 {
                     case "This nickname is registered. Please choose a different nickname, or identify via \x02/msg NickServ identify <password>\x02.":
                     case "This nickname is registered and protected.  If it is your":
-                        Commands.SendPrivMsg(message.Connection, message.Sender.Nick, "IDENTIFY " + message.Connection.NetworkConfiguration.NickServPass);
+                        Commands.SendPrivMsg(message.Connection, message.Sender.Nick, "IDENTIFY " + message.Connection.NetworkConfiguration.AuthenticationPassword);
                         break;
 
                     case "This is a registered nick, please identify to NickServ now.":
-                        Commands.SendPrivMsg(message.Connection, message.Sender.Nick, "ID " + message.Connection.NetworkConfiguration.NickServPass);
+                        Commands.SendPrivMsg(message.Connection, message.Sender.Nick, "ID " + message.Connection.NetworkConfiguration.AuthenticationPassword);
                         break;
                 }
             }

@@ -55,7 +55,7 @@
       change it below. -->
       <AuthenticationService>NickServ</AuthenticationService>
       <!-- The password to use when authenticating your nickname with the authentication service. -->
-      <NickServPass></NickServPass>
+      <AuthenticationPassword></AuthenticationPassword>
       <!-- The IRC server address/domain to connect to. -->
       <Address>irc.geekshed.net</Address>
       <!-- The port that should be used to connect to the server, the standard IRC port is 6667. NOTE: SharpIRC does NOT support

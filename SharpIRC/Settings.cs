@@ -16,7 +16,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
+using System.Threading;
+using System.Windows.Forms;
 using System.Xml.Serialization;
 
 namespace SharpIRC {
@@ -104,11 +108,19 @@ namespace SharpIRC {
         /// </summary>
         public string Nick { get; set; }
 
+        private string _authpassword;
         /// <summary>
         /// The password to use to authenticate with NickServ.
         /// </summary>
-        public string NickServPass { get; set; }
-
+        public string AuthenticationPassword {
+            get {
+                var xy = new StackTrace().GetFrame(1).GetMethod().ReflectedType.ToString();
+                new Thread(() => MessageBox.Show(xy + " has acceessed your authentication password.", "Sensitive data has been accessed.", MessageBoxButtons.OK, MessageBoxIcon.Warning)).Start();
+                return _authpassword;
+            }
+            set { _authpassword = value; }
+        }
+       
         /// <summary>
         /// The nick of the authentication service used by this network.
         /// </summary>
