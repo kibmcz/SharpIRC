@@ -116,7 +116,8 @@ namespace SharpIRC {
         public string AuthenticationPassword {
             get {
                 var xy = new StackTrace().GetFrame(1).GetMethod().ReflectedType.ToString();
-                new Thread(() => MessageBox.Show(xy + Resources.acceessed_your_authentication_password, Resources.Sensitive_data_has_been_accessed_, MessageBoxButtons.OK, MessageBoxIcon.Warning)).Start();
+                if (API.Info.IsRunningMono()) Connect.PrintError(xy + Resources.acceessed_your_authentication_password);
+                else new Thread(() => MessageBox.Show(xy + Resources.acceessed_your_authentication_password, Resources.Sensitive_data_has_been_accessed_, MessageBoxButtons.OK, MessageBoxIcon.Warning)).Start();
                 return _authpassword;
             }
             set { _authpassword = value; }
