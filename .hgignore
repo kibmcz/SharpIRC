@@ -3,12 +3,10 @@ obj
 bin
 *.user
 *.suo
-*.dll
 *_ReSharper*
 *.pidb
 *.pdb
 *.manifest
-Bin
 *.vs10x
 *.vs11
 *.ReSharper
