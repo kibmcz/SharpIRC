@@ -623,6 +623,7 @@ namespace SharpIRC.API {
     /// A collection of users within a channel.
     /// </summary>
     public class Channel {
+        private string _channelname;
         /// <summary>
         /// The users in the channel.
         /// </summary>
@@ -631,6 +632,14 @@ namespace SharpIRC.API {
         /// <summary>
         /// The channel containing these users.
         /// </summary>
-        public string Name { get; set; }
+        public string Name {
+            get { return _channelname; }
+            set { _channelname = value.ToLower(); }
+        }
+    }
+
+    public class LoggedInAdmin {
+        public string Nick { get; set; }
+        public Admin User { get; set; }
     }
 }

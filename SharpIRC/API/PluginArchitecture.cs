@@ -175,5 +175,11 @@ namespace SharpIRC.API {
         /// </summary>
         /// <param name="file">Filename of changed file.</param>
         public virtual void ConfigurationChange(ConfigurationFile file) { }
+
+        /// <summary>
+        /// Triggers when 30 seconds has happened without receiving a identification request from the server.
+        /// </summary>
+        /// <param name="connection">The IRC connection in question.</param>
+        public virtual void LoginTimedOut(IRCConnection connection) {}
     }
 }

@@ -50,11 +50,7 @@ namespace SharpIRC {
         /// <summary>
         /// List of admins currently logged in.
         /// </summary>
-        public static List<string> Sessions = new List<string>();
-        /// <summary>
-        /// 
-        /// </summary>
-        public static List<Admin> LoggedIn = new List<Admin>();
+        public static List<LoggedInAdmin> Sessions = new List<LoggedInAdmin>();
 
         /// <summary>
         /// Writes a "comment" to console.

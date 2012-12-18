@@ -6,8 +6,8 @@ namespace SharpIRC.API {
     internal class Events {
         internal void ChanMsg(IRCConnection connection, string message, string host, string channel) {
             if (host.IsIgnored() || connection.DelayActive) return;
-            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection);
-            var newMsg = new ChannelMessage { Channel = connection.GetChannelByName(channel.ToLower()), Connection = connection, Message = message, Sender = newUser, Type = MessageTypes.PRIVMSG };
+            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
+            var newMsg = new ChannelMessage { Channel = connection.GetChannelByName(channel), Connection = connection, Message = message, Sender = newUser, Type = MessageTypes.PRIVMSG };
             if (newMsg.Sender != null) Functions.LogHistory(connection.ActiveNetwork, channel, String.Format("({0}) <{1}> {2}", newMsg.Sender.Level, newMsg.Sender.Nick, newMsg.Message));
 
             foreach (PluginInterface plugin in Program.Plugins) {
@@ -21,9 +21,9 @@ namespace SharpIRC.API {
 
         internal void ChanAction(IRCConnection connection, string message, string host, string channel) {
             if (host.IsIgnored() || connection.DelayActive) return;
-            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection);
+            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
 
-            var newMsg = new ChannelMessage { Channel = connection.GetChannelByName(channel.ToLower()), Connection = connection, Message = message, Sender = newUser, Type = MessageTypes.ACTION };
+            var newMsg = new ChannelMessage { Channel = connection.GetChannelByName(channel), Connection = connection, Message = message, Sender = newUser, Type = MessageTypes.ACTION };
 
             if (newMsg.Sender != null) Functions.LogHistory(connection.ActiveNetwork, channel, String.Format("({0}) * {1} {2}", newMsg.Sender.Level, newMsg.Sender.Nick, newMsg.Message));
             foreach (PluginInterface plugin in Program.Plugins) {
@@ -98,9 +98,9 @@ namespace SharpIRC.API {
 
         internal void ChanNotice(IRCConnection connection, string message, string host, string channel) {
             if (host.IsIgnored() || connection.DelayActive) return;
-            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection);
+            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
 
-            var newMsg = new ChannelMessage { Channel = connection.GetChannelByName(channel.ToLower()), Connection = connection, Sender = newUser, Message = message, Type = MessageTypes.NOTICE };
+            var newMsg = new ChannelMessage { Channel = connection.GetChannelByName(channel), Connection = connection, Sender = newUser, Message = message, Type = MessageTypes.NOTICE };
             foreach (PluginInterface plugin in Program.Plugins) {
                 try {
                     plugin.ChanNotice(newMsg);
@@ -125,8 +125,8 @@ namespace SharpIRC.API {
         }
 
         internal void Join(IRCConnection connection, string host, string channel) {
-            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection);
-            var newMsg = new JoinMessage { Connection = connection, Sender = newUser, Channel = connection.GetChannelByName(channel.ToLower()), Type = MessageTypes.JOIN };
+            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
+            var newMsg = new JoinMessage { Connection = connection, Sender = newUser, Channel = connection.GetChannelByName(channel), Type = MessageTypes.JOIN };
             if (newMsg.Sender != null) Functions.LogHistory(connection.ActiveNetwork, newMsg.Channel.Name, String.Format("- {0} has joined the channel ({1})", newMsg.Sender.Nick, newMsg.Channel));
             foreach (PluginInterface plugin in Program.Plugins) {
                 try {
@@ -138,9 +138,9 @@ namespace SharpIRC.API {
         }
 
         internal void Part(IRCConnection connection, string host, string channel, string message) {
-            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection);
+            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
 
-            var newMsg = new PartMessage { Connection = connection, Sender = newUser, Message = message, Channel = connection.GetChannelByName(channel.ToLower()), Type = MessageTypes.PART };
+            var newMsg = new PartMessage { Connection = connection, Sender = newUser, Message = message, Channel = connection.GetChannelByName(channel), Type = MessageTypes.PART };
             if (newMsg.Sender != null) Functions.LogHistory(connection.ActiveNetwork, newMsg.Channel.Name, String.Format("- {0} has left the channel (Message: )", newMsg.Sender.Nick, newMsg.Message));
             foreach (PluginInterface plugin in Program.Plugins) {
                 try {
@@ -178,9 +178,9 @@ namespace SharpIRC.API {
         }
 
         internal void TopicChange(IRCConnection connection, string host, string channel, string message) {
-            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection);
+            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
 
-            var newMsg = new TopicChangeMessage { Connection = connection, Sender = newUser, Content = message, Channel = connection.GetChannelByName(channel.ToLower()), Type = MessageTypes.TOPIC };
+            var newMsg = new TopicChangeMessage { Connection = connection, Sender = newUser, Content = message, Channel = connection.GetChannelByName(channel), Type = MessageTypes.TOPIC };
 
             if (newMsg.Sender != null) Functions.LogHistory(connection.ActiveNetwork, newMsg.Channel.Name, String.Format("- {0} has changed the topic: {1}", newMsg.Sender.Nick, newMsg.Content));
             foreach (PluginInterface plugin in Program.Plugins) {
@@ -193,10 +193,10 @@ namespace SharpIRC.API {
         }
 
         internal void Kick(IRCConnection connection, string host, string channel, string kicked, string message) {
-            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection);
+            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
 
             var recieveUser = new IRCUser {Host = "", Level = UserLevel.Normal, Nick = kicked, RealName = ""};
-            var newMsg = new KickMessage { Connection = connection, Sender = newUser, Reciever = recieveUser, Message = message, Channel = connection.GetChannelByName(channel.ToLower()), Type = MessageTypes.KICK };
+            var newMsg = new KickMessage { Connection = connection, Sender = newUser, Reciever = recieveUser, Message = message, Channel = connection.GetChannelByName(channel), Type = MessageTypes.KICK };
 
             if (newMsg.Sender != null) Functions.LogHistory(connection.ActiveNetwork, newMsg.Channel.Name, String.Format("- {0} has kicked {1} ({2})", newMsg.Sender.Nick, newMsg.Reciever.Nick, newMsg.Message));
             foreach (PluginInterface plugin in Program.Plugins) {
@@ -209,11 +209,11 @@ namespace SharpIRC.API {
         }
 
         internal void Modechange(IRCConnection connection, string host, string channel, string modes) {
-            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection);
+            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
 
-            var newMsg = new ModeChangeMessage { Connection = connection, Sender = newUser, Modes = Functions.StringtoModeList(modes), Channel = connection.GetChannelByName(channel.ToLower()), Type = MessageTypes.MODE };
-            if (modes.Split(' ').Length > 1) {
-                var newuMode = new UserPrivilegiesMessage { Connection = connection, Sender = newUser, Channel = connection.GetChannelByName(channel.ToLower()), Type = MessageTypes.MODE };
+            var newMsg = new ModeChangeMessage { Connection = connection, Sender = newUser, Modes = Functions.StringtoModeList(modes), Channel = connection.GetChannelByName(channel), Type = MessageTypes.MODE };
+            if (modes.Split(' ').Length > 1 && channel != null) {
+                var newuMode = new UserPrivilegiesMessage { Connection = connection, Sender = newUser, Channel = connection.GetChannelByName(channel), Type = MessageTypes.MODE };
                 foreach (UserModeChange mode in Functions.StringtoUserModeList(modes, connection, channel)) {
                     if (mode.Action == ModeStatus.Set) {
                         if (mode.Mode == 'q') {
@@ -351,6 +351,17 @@ namespace SharpIRC.API {
                 try {
                     plugin.IRCMessage(newMsg);
                 } catch (Exception e) {
+                    Functions.LogError(e);
+                }
+            }
+        }
+
+        internal void LoginTimedOut(IRCConnection connection) {
+            foreach (PluginInterface plugin in Program.Plugins) {
+                try {
+                    plugin.LoginTimedOut(connection);
+                }
+                catch (Exception e) {
                     Functions.LogError(e);
                 }
             }

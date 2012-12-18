@@ -23,6 +23,7 @@ using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Security.Cryptography.X509Certificates;
+using System.Timers;
 using SharpIRC.API;
 
 namespace SharpIRC {
@@ -114,6 +115,9 @@ namespace SharpIRC {
                                         connection.DelayActive = false;
                                     }).Start();
                                 }
+                                connection.loginTimeout.Elapsed += new ElapsedEventHandler(connection.timeout_Elapsed);
+                                connection.loginTimeout.Start();
+
                             }
                             new Events().IRCMessage(connection, ServerData);
                             string[] smsg = ServerData.Split(' ');

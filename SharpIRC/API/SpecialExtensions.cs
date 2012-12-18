@@ -56,7 +56,14 @@ namespace SharpIRC.API {
         /// <param name="mChannel">Channel name</param>
         /// <returns>IRC Channel object.</returns>
         public static Channel GetChannelByName(this IRCConnection conn, string mChannel) {
-            return conn.Channels.FirstOrDefault(channel => channel.Name == mChannel);
+            var x = conn.Channels.FirstOrDefault(channel => channel.Name == mChannel.ToLower());
+            if (x != null) {
+                return x;
+            }
+            x = new Channel { Name = mChannel };
+            conn.Channels.Add(x);
+            return x;
+
         }
 
         /// <summary>
@@ -71,7 +78,7 @@ namespace SharpIRC.API {
         /// </summary>
         /// <param name="nick">An IRCUser object.</param>
         /// <returns>Whether or not the user is an admin.</returns>
-        public static bool IsBotAdmin(this IRCUser nick) { return Program.LoggedIn.Any(user => user.Username == nick.Nick); }
+        public static bool IsBotAdmin(this IRCUser nick) { return Program.Sessions.Any(user => user.Nick == nick.Nick); }
 
         /// <summary>
         /// Returns true if the specified user is currently specified as the bot owner.
@@ -79,7 +86,7 @@ namespace SharpIRC.API {
         /// <param name="nick">An IRCUser object.</param>
         /// <returns></returns>
         public static bool IsBotOwner(this IRCUser nick) {
-            return Program.LoggedIn.Any(user => user.Username == nick.Nick && user.Owner);
+            return Program.Sessions.Any(user => user.Nick == nick.Nick && user.User.Owner);
         }
 
         /// <summary>
@@ -88,12 +95,11 @@ namespace SharpIRC.API {
         /// <param name="nick">Nickname.</param>
         /// <param name="connection">The IRCConnection to search on.</param>
         /// <returns>The IRCUser object in the nicklist.</returns>
-        public static IRCUser IRCUserFromString(this string nick, IRCConnection connection) { 
-            IRCUser getUser = null;
-            foreach (IRCUser user in from list in connection.Channels from user in list.Nicks where user.Nick == nick select user) {
-                getUser = user;
-            }
-            return getUser;
+        public static IRCUser IRCUserFromString(this string nick, Channel channel) {
+            return channel.Nicks.FirstOrDefault(x => x.Nick == nick);
+        }
+        public static IRCUser IRCUserFromString(this string nick, IRCConnection connection) {
+            return connection.Channels.SelectMany(x => x.Nicks).FirstOrDefault(y => y.Nick == nick);
         }
 
         /// <summary>

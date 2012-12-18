@@ -50,11 +50,11 @@ namespace SharpIRC {
             var modelist = new List<UserModeChange>();
             char[] modeArray = modes.Split(' ')[0].ToCharArray();
             string[] nicks = modes.Split(' ');
-            ModeStatus status = ModeStatus.Set;
+            var status = ModeStatus.Set;
             int user = 0;
             foreach (char x in modeArray) {
                 if (nicks.Length <= user) break;
-                IRCUser newUser = nicks[user].IRCUserFromString(connection);
+                IRCUser newUser = nicks[user].IRCUserFromString(connection.GetChannelByName(channel));
                 if (x == '+') status = ModeStatus.Set;
                 if (x == '-') status = ModeStatus.Removed;
                 var newMode = new UserModeChange {Mode = x, Action = status, Nick = newUser};
@@ -120,27 +120,19 @@ namespace SharpIRC {
             }
         }
 
-        public static bool UpdateNickList(IRCConnection connection, string channel, string whomessage) {
-            try {
-                string[] sms = whomessage.Split(' ');
-                string nickname = sms[3];
-                string hostname = sms[1];
-                string chanmode = sms[4].Substring(sms[4].Length - 1, 1);
-                Console.WriteLine(chanmode);
-                string realname = Connect.JoinString(sms, 6, false);
-                foreach (Channel ch in connection.Channels.Where(temp => temp.Name == channel)) {
-                    foreach (IRCUser nk in ch.Nicks.Where(nk => nk.Nick == nickname)) {
-                        nk.Level = ModeToLevel(chanmode);
-                        return true;
-                    }
-                    ch.Nicks.Add(new IRCUser {Host = hostname, Level = ModeToLevel(chanmode), Nick = nickname, RealName = realname});
-                    return true;
-                }
-                connection.Channels.Add(new Channel {Name = channel, Nicks = new List<IRCUser> {new IRCUser {Host = hostname, Level = ModeToLevel(chanmode), Nick = nickname, RealName = realname}}});
-                return true;
-            } catch {
-                return false;
-            }
+        public static void UpdateNickList(IRCConnection connection, string channel, string whomessage) {
+            string[] sms = whomessage.Split(' ');
+            string nickname = sms[3];
+            string hostname = sms[1];
+            string chanmode = sms[4].Substring(sms[4].Length - 1, 1);
+            string realname = Connect.JoinString(sms, 6, false);
+            connection.GetChannelByName(channel).Nicks.RemoveAll(x => x.Nick == nickname);
+            connection.GetChannelByName(channel).Nicks.Add(new IRCUser {
+                                                                             Host = hostname,
+                                                                             Level = ModeToLevel(chanmode),
+                                                                             Nick = nickname,
+                                                                             RealName = realname
+                                                                         });
         }
 
         internal static void LogError(Exception ex) {

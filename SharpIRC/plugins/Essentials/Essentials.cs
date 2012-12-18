@@ -143,10 +143,9 @@ namespace SharpIRC {
                     var username = message.Message.Split(' ')[1];
                     var password = message.Message.Split(' ')[2];
                     foreach (Admin admin in Program.GlobalSettings.Admins.Where(admin => username == admin.Username && password == admin.Password)) {
-                        Program.LoggedIn.Add(admin);
                         Commands.SendPrivMsg(message.Connection, message.Sender.Nick, "You have authenticated as \"" + admin.Username + "\" and are now signed in as an administrator. . Your session will end in 60 minutes or when you quit.");
                         if (!Program.GlobalSettings.DisableSessionTimer) SessionTimer(message.Connection, message.Sender.Nick);
-                        Program.Sessions.Add(message.Sender.Nick);
+                        Program.Sessions.Add(new LoggedInAdmin() {Nick = message.Sender.Nick, User = admin});
                         return;
                     }
                     Commands.SendPrivMsg(message.Connection,message.Sender.Nick,"Login failed: Incorrect username or password.");
@@ -176,10 +175,12 @@ namespace SharpIRC {
                     case "This nickname is registered. Please choose a different nickname, or identify via \x02/msg NickServ identify <password>\x02.":
                     case "This nickname is registered and protected.  If it is your":
                         Commands.SendPrivMsg(message.Connection, message.Sender.Nick, "IDENTIFY " + message.Connection.NetworkConfiguration.AuthenticationPassword);
+                        message.Connection.loginTimeout.Stop();
                         break;
 
                     case "This is a registered nick, please identify to NickServ now.":
                         Commands.SendPrivMsg(message.Connection, message.Sender.Nick, "ID " + message.Connection.NetworkConfiguration.AuthenticationPassword);
+                        message.Connection.loginTimeout.Stop();
                         break;
                 }
             }
@@ -189,10 +190,10 @@ namespace SharpIRC {
             new Thread(new ThreadStart(delegate
             {
                 Thread.Sleep(3600000);
-                var templogin = Program.LoggedIn.ToList();
-                foreach (Admin user in templogin.Where(user => user.Username == nick))
+                var templogin = Program.Sessions.ToList();
+                foreach (LoggedInAdmin user in templogin.Where(user => user.Nick == nick))
                 {
-                    Program.LoggedIn.Remove(user);
+                    Program.Sessions.Remove(user);
                     Commands.SendPrivMsg(connection, nick, String.Format("Your 60 minute admin session has ended. \"/msg {0} login <Username> <Password>\" to log in again.", connection.CurrentNick));
                 }
             })).Start();

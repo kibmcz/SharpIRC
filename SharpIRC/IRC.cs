@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
+using System.Timers;
 using SharpIRC.API;
 
 namespace SharpIRC {
@@ -23,6 +24,7 @@ namespace SharpIRC {
         internal StreamReader reader { get; set; }
         internal X509Certificate serverCertificate;
         internal SslStream sslStream;
+        public Timer loginTimeout = new Timer(30000);
 
         /// <summary>
         /// The address of the IRC Server the bot is currently connected to.
@@ -97,6 +99,10 @@ namespace SharpIRC {
         public void Terminate() {
             Tcpclient.Close();
             Connected = false;
+        }
+
+        internal void timeout_Elapsed(object sender, ElapsedEventArgs e) {
+            new Events().LoginTimedOut(this);
         }
     }
 }

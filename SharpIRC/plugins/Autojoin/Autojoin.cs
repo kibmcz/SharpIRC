@@ -76,6 +76,7 @@ namespace SharpIRC {
                         autojoin.Networks.Add(newnet);
                     }
                     Commands.SendNotice(message.Connection, message.Sender.Nick, String.Format("The channel {0} has been added to autojoin.", chantoAdd));
+                    Commands.SendJoin(message.Connection, chantoAdd);
                     ConfigurationAPI.SaveConfigurationFile(autojoin, "Autojoin");
                 }
                 if (message.Message.IsSubCommand("del")) {
@@ -83,6 +84,7 @@ namespace SharpIRC {
                         if (net.Channels.Remove(chantoAdd)) {
                             Commands.SendNotice(message.Connection, message.Sender.Nick, String.Format("The channel {0} has been removed from autojoin.", chantoAdd));
                             ConfigurationAPI.SaveConfigurationFile(autojoin, "Autojoin");
+                            Commands.SendPart(message.Connection, chantoAdd, "Removed from autojoin.");
                         } else Commands.SendNotice(message.Connection, message.Sender.Nick, "Deletion was unsucessful, channel was not found.");
                     }
                 }
@@ -101,6 +103,11 @@ namespace SharpIRC {
                     foreach (string chan in autojoin.Networks.Where(net => net.ID == message.Connection.NetworkConfiguration.ID).SelectMany(net => net.Channels)) Commands.SendJoin(message.Connection, chan);
                 }
             }
+        }
+
+        public override void LoginTimedOut(IRCConnection connection) {
+            foreach (string chan in autojoin.Networks.Where(net => net.ID == connection.NetworkConfiguration.ID).SelectMany(net => net.Channels)) Commands.SendJoin(connection, chan);
+            Commands.SendPrivMsg(connection, connection.NetworkConfiguration.SetupChannel, "30 seconds has passed without 9");
         }
 
         #region Nested type: AutoJoinNetwork

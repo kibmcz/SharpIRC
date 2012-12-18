@@ -176,6 +176,6 @@ namespace SharpIRC {
         /// <summary>
         /// Whether or not this is the current owner of the bot.
         /// </summary>
-        [XmlAttribute("ID")] public bool Owner { get; set; }
+        [XmlAttribute("Owner")] public bool Owner { get; set; }
     }
 }
