@@ -18,6 +18,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Security;
 using System.Net.Sockets;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -88,7 +89,8 @@ namespace SharpIRC {
                 connection.Tcpclient = new TcpClient(connection.NetworkConfiguration.Address, connection.NetworkConfiguration.ServerPort);
                 if (connection.Tcpclient.Connected) {
                     if (connection.NetworkConfiguration.SSL) {
-                        throw new NotImplementedException("SSL is not yet supported by SharpIRC. please disable this for now.");
+                        var reader = new BinaryReader(new SslStream(connection.Tcpclient.GetStream(), true));
+
                     }
                     else {
                         connection.stream = connection.Tcpclient.GetStream();
@@ -286,6 +288,20 @@ namespace SharpIRC {
         /// <returns>Original message substringed by one.</returns>
         public static string RemoveColon(string data) {
             return data.StartsWith(":") ? data.Substring(1) : data;
+        }
+
+        public static bool ValidateServerCertificate(
+              object sender,
+              X509Certificate certificate,
+              X509Chain chain,
+              SslPolicyErrors sslPolicyErrors) {
+            if (sslPolicyErrors == SslPolicyErrors.None)
+                return true;
+
+            Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
+
+            // Do not allow this client to communicate with unauthenticated servers. 
+            return false;
         }
 
         #region Nested type: Wildcard
