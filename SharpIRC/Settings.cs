@@ -20,7 +20,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Threading;
-using System.Windows.Forms;
 using System.Xml.Serialization;
 using SharpIRC.Properties;
 
@@ -116,8 +115,7 @@ namespace SharpIRC {
         public string AuthenticationPassword {
             get {
                 var xy = new StackTrace().GetFrame(1).GetMethod().ReflectedType.ToString();
-                if (API.Info.IsRunningMono()) Connect.PrintError(xy + Resources.acceessed_your_authentication_password);
-                else new Thread(() => MessageBox.Show(xy + Resources.acceessed_your_authentication_password, Resources.Sensitive_data_has_been_accessed_, MessageBoxButtons.OK, MessageBoxIcon.Warning)).Start();
+                Connect.PrintError(xy + Resources.acceessed_your_authentication_password);
                 return _authpassword;
             }
             set { _authpassword = value; }

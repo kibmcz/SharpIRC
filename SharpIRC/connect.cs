@@ -294,6 +294,14 @@ namespace SharpIRC {
             return data.StartsWith(":") ? data.Substring(1) : data;
         }
 
+        /// <summary>
+        /// Validates the SSL certificate.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="certificate"></param>
+        /// <param name="chain"></param>
+        /// <param name="sslPolicyErrors"></param>
+        /// <returns></returns>
         public static bool ValidateServerCertificate(
               object sender,
               X509Certificate certificate,

@@ -1,4 +1,20 @@
-﻿using System;
+﻿/*
+   Copyright 2009-2012 Alex Sørlie Glomsaas, Adonis S. Deliannis, Kevin Crowston
+
+   Licensed under the Apache License, Version 2.0 (the "License");
+   you may not use this file except in compliance with the License.
+   You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+   Unless required by applicable law or agreed to in writing, software
+   distributed under the License is distributed on an "AS IS" BASIS,
+   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+   See the License for the specific language governing permissions and
+   limitations under the License.
+*/
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -90,14 +106,21 @@ namespace SharpIRC.API {
         }
 
         /// <summary>
-        /// Searches the nicklist for users on the network matching the string.
+        /// Searches the nicklist for users in the channel matching the string.
         /// </summary>
         /// <param name="nick">Nickname.</param>
-        /// <param name="connection">The IRCConnection to search on.</param>
+        /// <param name="channel">The channel to search on.</param>
         /// <returns>The IRCUser object in the nicklist.</returns>
         public static IRCUser IRCUserFromString(this string nick, Channel channel) {
             return channel.Nicks.FirstOrDefault(x => x.Nick == nick);
         }
+
+        /// <summary>
+        /// Searches the nicklist for users in the network matching the string.
+        /// </summary>
+        /// <param name="nick">Nickname.</param>
+        /// <param name="connection">IRC connection to search on.</param>
+        /// <returns>First result or null.</returns>
         public static IRCUser IRCUserFromString(this string nick, IRCConnection connection) {
             return connection.Channels.SelectMany(x => x.Nicks).FirstOrDefault(y => y.Nick == nick);
         }
@@ -187,7 +210,7 @@ namespace SharpIRC.API {
         }
 
         /// <summary>
-        /// Whether or not the user has admin (&) or higher privilegies in the channel.
+        /// Whether or not the user has admin (&) or higher privileges in the channel.
         /// </summary>
         /// <param name="user">The user to check.</param>
         /// <param name="channel">The channel to check</param>
@@ -354,7 +377,7 @@ namespace SharpIRC.API {
         }
 
         /// <summary>
-        /// Whether or not the input is a standard #& IRC channel.
+        /// Whether or not the input is a standard IRC channel.
         /// </summary>
         /// <param name="s">Input WORD (no spaces) to validate.</param>
         /// <returns>Whether or not the input is a valid IRC protocol irc channel.</returns>
@@ -364,30 +387,94 @@ namespace SharpIRC.API {
 
 
         public static void Empty(this DirectoryInfo directory) {
-            foreach (System.IO.FileInfo file in directory.GetFiles()) file.Delete();
-            foreach (System.IO.DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
+            foreach (FileInfo file in directory.GetFiles()) file.Delete();
+            foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
         }
     }
 
     /// <summary>
-    /// 
+    /// IRC Color representation.
     /// </summary>
     public static class IRCColor {
+        /// <summary>
+        /// White
+        /// </summary>
+        /// <returns>Color code for white</returns>
         public static String White() { return (char)3 + "0"; }
+        /// <summary>
+        /// Black
+        /// </summary>
+        /// <returns>Color code for black</returns>
         public static String Black() { return (char)3 + "1"; }
+        /// <summary>
+        /// Dark Blue
+        /// </summary>
+        /// <returns>Color code for dark blue</returns>
         public static String DarkBlue() { return (char)3 + "2"; }
+        /// <summary>
+        /// Green
+        /// </summary>
+        /// <returns>Color code for green</returns>
         public static String Green() { return (char)3 + "3"; }
+        /// <summary>
+        /// Red
+        /// </summary>
+        /// <returns>Color code for red</returns>
         public static String Red() { return (char)3 + "4"; }
+        /// <summary>
+        /// Maroon
+        /// </summary>
+        /// <returns>Color code for maroon</returns>
         public static String Maroon() { return (char)3 + "5"; }
+        /// <summary>
+        /// Purple
+        /// </summary>
+        /// <returns>Color code for purple/violet</returns>
         public static String Purple() { return (char)3 + "6"; }
+        /// <summary>
+        /// Orange
+        /// </summary>
+        /// <returns>Color code for orange</returns>
         public static String Orange() { return (char)3 + "7"; }
+        /// <summary>
+        /// Yellow
+        /// </summary>
+        /// <returns>Color code for yellow</returns>
         public static String Yellow() { return (char)3 + "8"; }
+        /// <summary>
+        /// Lime Green
+        /// </summary>
+        /// <returns>Color code for lime green</returns>
         public static String LimeGreen() { return (char)3 + "9"; }
+        /// <summary>
+        /// Teal
+        /// </summary>
+        /// <returns>Color code for teal</returns>
         public static String Teal() { return (char)3 + "10"; }
+        /// <summary>
+        /// Cyan
+        /// </summary>
+        /// <returns>Color code for cyan</returns>
         public static String Cyan() { return (char)3 + "11"; }
+        /// <summary>
+        /// Blue
+        /// </summary>
+        /// <returns>Color code for blue</returns>
         public static String Blue() { return (char)3 + "12"; }
+        /// <summary>
+        /// Pink
+        /// </summary>
+        /// <returns>Color code for pink</returns>
         public static String Pink() { return (char)3 + "13"; }
+        /// <summary>
+        /// Gray
+        /// </summary>
+        /// <returns>Color code for gray/dark gray</returns>
         public static String Gray() { return (char)3 + "14"; }
+        /// <summary>
+        /// Light Gray
+        /// </summary>
+        /// <returns>Color code for light gray</returns>
         public static String LightGray() { return (char)3 + "15"; }
     }
     /// <summary>
