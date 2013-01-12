@@ -210,7 +210,7 @@ namespace SharpIRC.API {
         }
 
         /// <summary>
-        /// Whether or not the user has admin (&) or higher privileges in the channel.
+        /// Whether or not the user has admin or higher privileges in the channel.
         /// </summary>
         /// <param name="user">The user to check.</param>
         /// <param name="channel">The channel to check</param>
@@ -385,7 +385,10 @@ namespace SharpIRC.API {
             return Regex.Match(s, @"([#&][^\x07\x2C\s]{0,200})").Success;
         }
 
-
+        /// <summary>
+        /// Deletes all the contents of a directory
+        /// </summary>
+        /// <param name="directory">Directory</param>
         public static void Empty(this DirectoryInfo directory) {
             foreach (FileInfo file in directory.GetFiles()) file.Delete();
             foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);

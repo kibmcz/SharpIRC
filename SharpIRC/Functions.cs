@@ -139,5 +139,11 @@ namespace SharpIRC {
             Connect.PrintError(ex.Message);
             LogError(Convert.ToString(ex.GetBaseException()));
         }
+
+        public static void UpdateNickChange(IRCConnection connection, string oldnick, string newnick) {
+            foreach (var user in from chan in connection.Channels from user in chan.Nicks where user.Nick == oldnick select user) {
+                user.Nick = newnick;
+            }
+        }
     }
 }

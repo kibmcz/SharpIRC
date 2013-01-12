@@ -20,6 +20,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Security;
+using System.Security.Permissions;
 using System.Text;
 using System.Threading;
 using System.Xml;
@@ -78,10 +80,10 @@ namespace SharpIRC {
             Console.ForegroundColor = ConsoleColor.White;
             if (GlobalSettings.LogComments) {
                 try {
-                    string makePath = Path.Combine(StartupPath, "Logs");
+                    var makePath = Path.Combine(StartupPath, "Logs");
                     if (!Directory.Exists(makePath)) Directory.CreateDirectory(makePath);
                     makePath = Path.Combine(makePath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
-                    FileStream fs = File.Open(makePath, FileMode.Append, FileAccess.Write);
+                    var fs = File.Open(makePath, FileMode.Append, FileAccess.Write);
                     var sw = new StreamWriter(fs, Encoding.UTF8);
                     sw.WriteLine("[" + DateTime.Now.ToString("M HH:mm:ss") + "] " + comment);
                     sw.Close();
@@ -105,7 +107,7 @@ namespace SharpIRC {
                     }
                 }
                 if (!File.Exists(Path.Combine(StartupPath, "Settings.xml"))) {
-                    Connect.PrintError("SharpIRC did not find a configuration file in path " + Path.Combine(StartupPath, "Settings.xml") + " A new file has been generated, please fill in the required information.");
+                    Connect.PrintError("SharpIRC did not find a configuration file in path " + Path.Combine(StartupPath, "Settings.xml") + " A default file has been generated, please fill in the required information.");
                     File.WriteAllBytes(Path.Combine(StartupPath, "Settings.xml"), Encoding.ASCII.GetBytes(Resources.Settings));
                     Console.ReadLine();
                     Environment.Exit(0);
@@ -116,6 +118,10 @@ namespace SharpIRC {
                     Console.ReadLine();
                     Environment.Exit(0);
                 }
+
+                var writePermission = new FileIOPermission(FileIOPermissionAccess.Write, StartupPath);
+                if (!SecurityManager.IsGranted(writePermission)) Connect.PrintError("Fatal Error: Lacking write permission to main directory: " + StartupPath);
+                
                 ConfigurationAPI.StartAutomaticFileChecker();
                 if (!Directory.Exists(Path.Combine(StartupPath, "Database"))) {
                     Connect.PrintError("The database and configuration directory does not exist, generating a new one..");
@@ -143,7 +149,9 @@ namespace SharpIRC {
                     var con = new IRCConnection {NetworkConfiguration = netw};
                     new Thread(() => Connect.ConnnectToNetwork(con)).Start();
                 }
-            } catch {
+            }
+            catch(Exception ex) {
+                Connect.PrintError(ex.InnerException.ToString());
             }
         }
 
@@ -166,13 +174,18 @@ namespace SharpIRC {
         /// </summary>
         /// <param name="d"></param>
         public static void SerializeDataFile(Settings d) {
-            // Serialization
-            var s = new XmlSerializer(typeof (Settings));
-            string configpath = Path.Combine(StartupPath, "Settings.xml");
-            XmlWriter w = XmlWriter.Create(configpath, new XmlWriterSettings {CheckCharacters = false, Indent = true});
+            try {
+                // Serialization
+                var s = new XmlSerializer(typeof(Settings));
+                string configpath = Path.Combine(StartupPath, "Settings.xml");
+                XmlWriter w = XmlWriter.Create(configpath, new XmlWriterSettings { CheckCharacters = false, Indent = true });
 
-            s.Serialize(w, d);
-            w.Close();
+                s.Serialize(w, d);
+                w.Close();
+            }
+            catch(Exception ex) {
+                Connect.PrintError(ex.InnerException.ToString());
+            }
         }
 
         /// <summary>

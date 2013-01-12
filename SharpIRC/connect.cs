@@ -231,6 +231,7 @@ namespace SharpIRC {
                                 case "NICK":
                                     if (Functions.NickFromHost(ims[0]) == connection.CurrentNick) connection.CurrentNick = ims[2].Substring(1);
                                     new Events().Nickchange(connection, ims[0], ims[2].Substring(1));
+                                    Functions.UpdateNickChange(connection, ims[0], ims[2].Substring(1));
                                     break;
                                 case "352":
                                     Functions.UpdateNickList(connection, smsg[3], JoinString(smsg, 4, false));

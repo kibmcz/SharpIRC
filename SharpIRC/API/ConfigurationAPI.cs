@@ -38,12 +38,17 @@ namespace SharpIRC.API
         /// <param name="d">Serializable class to write to the XML file.</param>
         /// <param name="fileName">Filename for the XML file without extension.</param>
         public static void SaveConfigurationFile(Object d, string fileName) {
-            // Serialization
-            var s = new XmlSerializer(d.GetType());
-            string configpath = String.Format("{0}{1}Database{1}{2}.xml", Program.StartupPath, Path.DirectorySeparatorChar, fileName);
-            XmlWriter w = XmlWriter.Create(configpath, new XmlWriterSettings { CheckCharacters = false, Indent = true });
-            s.Serialize(w, d);
-            w.Close();
+            try {
+                // Serialization
+                var s = new XmlSerializer(d.GetType());
+                string configpath = String.Format("{0}{1}Database{1}{2}.xml", Program.StartupPath, Path.DirectorySeparatorChar, fileName);
+                XmlWriter w = XmlWriter.Create(configpath, new XmlWriterSettings { CheckCharacters = false, Indent = true });
+                s.Serialize(w, d);
+                w.Close();
+            }
+            catch(Exception ex) {
+                Connect.PrintError(ex.InnerException.ToString());
+            }
         }
 
         /// <summary>
