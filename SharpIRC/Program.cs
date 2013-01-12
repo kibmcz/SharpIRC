@@ -106,6 +106,11 @@ namespace SharpIRC {
                                 Info.MonoFrameworkVersion()));
                     }
                 }
+                if (!WritePermission()) {
+                    Connect.PrintError("Fatal Error: Lacking write permission to main directory: " + StartupPath);
+                    Console.ReadLine();
+                }
+
                 if (!File.Exists(Path.Combine(StartupPath, "Settings.xml"))) {
                     Connect.PrintError("SharpIRC did not find a configuration file in path " + Path.Combine(StartupPath, "Settings.xml") + " A default file has been generated, please fill in the required information.");
                     File.WriteAllBytes(Path.Combine(StartupPath, "Settings.xml"), Encoding.ASCII.GetBytes(Resources.Settings));
@@ -119,9 +124,7 @@ namespace SharpIRC {
                     Environment.Exit(0);
                 }
 
-                var writePermission = new FileIOPermission(FileIOPermissionAccess.Write, StartupPath);
-                if (!SecurityManager.IsGranted(writePermission)) Connect.PrintError("Fatal Error: Lacking write permission to main directory: " + StartupPath);
-                
+               
                 ConfigurationAPI.StartAutomaticFileChecker();
                 if (!Directory.Exists(Path.Combine(StartupPath, "Database"))) {
                     Connect.PrintError("The database and configuration directory does not exist, generating a new one..");
@@ -254,6 +257,17 @@ namespace SharpIRC {
             Connect.PrintError(String.Format("SharpIRC encountered an error parsing your configuration file in path: \"{0}\" and cannot proceed. Invalid Element. Line: {1}. Position: {2}. Error: {3}", Path.Combine(StartupPath, "Settings.xml"), e.LineNumber, e.LinePosition));
             Console.ReadLine();
             Environment.Exit(0);
+        }
+
+        private static bool WritePermission() {
+            try {
+                File.WriteAllText(Path.Combine(StartupPath, "Access.txt"), Resources.Program_WritePermission_Filesystem_access_test_);
+                File.Delete(Path.Combine(StartupPath, "Access.txt"));
+                return true;
+            }
+            catch {
+                return false;
+            }
         }
 
     }

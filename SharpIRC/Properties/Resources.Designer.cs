@@ -80,6 +80,15 @@ namespace SharpIRC.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Filesystem access test..
+        /// </summary>
+        internal static string Program_WritePermission_Filesystem_access_test_ {
+            get {
+                return ResourceManager.GetString("Program_WritePermission_Filesystem_access_test_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sensitive data has been accessed..
         /// </summary>
         internal static string Sensitive_data_has_been_accessed_ {

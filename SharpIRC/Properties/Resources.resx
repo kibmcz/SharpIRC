@@ -130,4 +130,7 @@
   <data name="Sensitive_data_has_been_accessed_">
     <value xml:space="preserve">Sensitive data has been accessed.</value>
   </data>
+  <data name="Program_WritePermission_Filesystem_access_test_">
+    <value xml:space="preserve">Filesystem access test.</value>
+  </data>
 </root>
