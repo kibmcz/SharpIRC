@@ -31,7 +31,7 @@ namespace SharpIRC.API {
         /// <param name="reciever">The channel or user to send to.</param>
         /// <param name="message">The message to send.</param>
         public static void SendPrivMsg(IRCConnection connection, string reciever, string message) {
-            if (Program.GlobalSettings.SplitCommandOutput) {
+            if (Program.Configuration.SplitCommandOutput) {
                 var result = new List<string>(Regex.Split(message, @"(?<=\G.{420})"));
                 foreach (string msg in result) Connect.SendToServer(connection, String.Format("PRIVMSG {0} :{1}", reciever," " + msg));
             }
@@ -45,7 +45,7 @@ namespace SharpIRC.API {
         /// <param name="reciever">The channel or user to send to.</param>
         /// <param name="message">The message to send.</param>
         public static void SendPrivMsg(IRCConnection connection, Channel reciever, string message) {
-            if (Program.GlobalSettings.SplitCommandOutput) {
+            if (Program.Configuration.SplitCommandOutput) {
                 var result = new List<string>(Regex.Split(message, @"(?<=\G.{420})"));
                 foreach (string msg in result) Connect.SendToServer(connection, String.Format("PRIVMSG {0} :{1}", reciever.Name, " " + msg));
             } else Connect.SendToServer(connection, String.Format("PRIVMSG {0} :{1}", reciever.Name, message));

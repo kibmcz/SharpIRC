@@ -105,9 +105,9 @@ namespace SharpIRC.Properties {
         ///  &lt;!-- Enter the ASCII character code for what you want as your command prefix. i.e for &quot;!google&quot; your prefix would be ! or &quot;33&quot;
         ///  To find out what the ASCII character code for the character you want is, visit http://www.asciitable.com [rest of string was truncated]&quot;;.
         /// </summary>
-        internal static string Settings {
+        internal static string sharpirc {
             get {
-                return ResourceManager.GetString("Settings", resourceCulture);
+                return ResourceManager.GetString("sharpirc", resourceCulture);
             }
         }
     }

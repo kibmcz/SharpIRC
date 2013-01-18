@@ -19,6 +19,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using SharpIRC.API;
 
@@ -71,7 +72,7 @@ namespace SharpIRC {
             sw.WriteLine();
             sw.Close();
             fs.Close();
-            if (Program.GlobalSettings.LogComments) {
+            if (Program.Configuration.LogComments) {
                 string makePath = Path.Combine(Program.StartupPath, "Logs");
                 if (!Directory.Exists(makePath)) Directory.CreateDirectory(makePath);
                 makePath = Path.Combine(makePath, DateTime.Now.ToString("dd-MM-yyyy") + ".txt");
@@ -82,31 +83,33 @@ namespace SharpIRC {
                 fs.Close();
             }
         }
-
-        public static UserLevel ModeToLevel(string chanmode) {
-            UserLevel level = UserLevel.Normal;
-            switch (chanmode[0]) {
-                case ((char) 43):
-                    level = UserLevel.Voice;
-                    break;
-                case ((char) 37):
-                    level = UserLevel.Halfop;
-                    break;
-                case ((char) 64):
-                    level = UserLevel.Operator;
-                    break;
-                case ((char) 38):
-                    level = UserLevel.Admin;
-                    break;
-                case ((char) 126):
-                    level = UserLevel.Owner;
-                    break;
+        public static void AssertUModes(IRCConnection connection, string umodes) {
+            connection.Umodes = new IRCDUMode();
+            var match = Regex.Match(umodes, @"\((.*?)\)(.*)");
+            var udef = match.Groups[1].Value;
+            var uchar = match.Groups[2].Value;
+            for (var i = 0; i < udef.Length; i++) {
+                if (udef[i] == 'Y') connection.Umodes.IRCOP = uchar[i];
+                if (udef[i] == 'q') connection.Umodes.Owner = uchar[i];
+                if (udef[i] == 'a') connection.Umodes.Admin = uchar[i];
+                if (udef[i] == 'o') connection.Umodes.Operator = uchar[i];
+                if (udef[i] == 'h') connection.Umodes.Halfop = uchar[i];
+                if (udef[i] == 'v') connection.Umodes.Voice = uchar[i];
             }
-            return level;
+        }
+
+        public static UserLevel ModeToLevel(IRCConnection connection, string chanmode) {
+            if (chanmode[0] == connection.Umodes.IRCOP) return UserLevel.IRCOP;
+            if (chanmode[0] == connection.Umodes.Owner) return UserLevel.Owner;
+            if (chanmode[0] == connection.Umodes.Admin) return UserLevel.Admin;
+            if (chanmode[0] == connection.Umodes.Operator) return UserLevel.Operator;
+            if (chanmode[0] == connection.Umodes.Halfop) return UserLevel.Halfop;
+            if (chanmode[0] == connection.Umodes.Voice) return UserLevel.Voice;
+            return UserLevel.Normal;
         }
 
         public static void LogHistory(string Network, String Name, string Text) {
-            if (Program.GlobalSettings.ChatHistory) {
+            if (Program.Configuration.ChatHistory) {
                 try {
                     string mPath = String.Format("{0}{1}Chat History{1}{2}{1}{3}", Program.StartupPath, Path.DirectorySeparatorChar, Network, Name);
                     if (!Directory.Exists(mPath)) Directory.CreateDirectory(mPath);
@@ -129,14 +132,14 @@ namespace SharpIRC {
             connection.GetChannelByName(channel).Nicks.RemoveAll(x => x.Nick == nickname);
             connection.GetChannelByName(channel).Nicks.Add(new IRCUser {
                                                                              Host = hostname,
-                                                                             Level = ModeToLevel(chanmode),
+                                                                             Level = ModeToLevel(connection, chanmode),
                                                                              Nick = nickname,
                                                                              RealName = realname
                                                                          });
         }
 
         internal static void LogError(Exception ex) {
-            Connect.PrintError(ex.Message);
+            Program.OutputConsole(ex.GetBaseException().ToString(), ConsoleMessageType.Error);
             LogError(Convert.ToString(ex.GetBaseException()));
         }
 

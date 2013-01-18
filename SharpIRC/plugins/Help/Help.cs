@@ -66,7 +66,7 @@ namespace SharpIRC
                     foreach (var addin in Addins.Where(addin => addin.Name == subcmd)) {
                         Commands.SendNotice(message.Connection, message.Sender.Nick, String.Format("{0}Displaying all channel commands in the group \"{1}\".", IRCColor.Blue(), addin.Name));
                         foreach (var cmd in addin.Commands.Where(cmd => cmd.Type == HelpCommandType.Channel)) {
-                            Commands.SendNotice(message.Connection, message.Sender.Nick, String.Format("{0}Syntax: {1}{2}", IRCColor.Blue(), Program.GlobalSettings.CommandPrefix, FormatSyntax(cmd.Syntax)));
+                            Commands.SendNotice(message.Connection, message.Sender.Nick, String.Format("{0}Syntax: {1}{2}", IRCColor.Blue(), Program.Configuration.CommandPrefix, FormatSyntax(cmd.Syntax)));
                             Commands.SendNotice(message.Connection, message.Sender.Nick, String.Format("{0}Description: {1}", IRCColor.Blue(), cmd.Description));
                             Commands.SendNotice(message.Connection, message.Sender.Nick, " ");
                         }

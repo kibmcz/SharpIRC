@@ -72,7 +72,7 @@ namespace SharpIRC {
                     }
                 }
             } catch (Exception ex) {
-                Connect.PrintError(ex.Message);
+                Program.OutputConsole(ex.GetBaseException().ToString(), ConsoleMessageType.Error);
             }
         }
 

@@ -49,14 +49,14 @@ namespace SharpIRC.API
         /// <returns>Permissions</returns>
         public static PermissionIndex DeserializePermissionsFile(string path) {
             try {
-                var s = new XmlSerializer(typeof(Settings));
+                var s = new XmlSerializer(typeof(Config));
                 XmlReader r = XmlReader.Create(path, new XmlReaderSettings { CheckCharacters = false });
                 var newList = (PermissionIndex)s.Deserialize(r);
                 r.Close();
                 return newList;
             }
             catch (Exception ex) {
-                Connect.PrintError(ex.Message);
+                Program.OutputConsole(ex.GetBaseException().ToString(), ConsoleMessageType.Error);
                 return null;
             }
         }

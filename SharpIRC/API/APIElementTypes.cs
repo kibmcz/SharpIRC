@@ -573,6 +573,18 @@ namespace SharpIRC.API {
     }
 
     /// <summary>
+    /// The IRCD usermode characters as set by the IRCD
+    /// </summary>
+    public class IRCDUMode {
+        public char IRCOP { get; internal set; }
+        public char Owner { get; internal set; }
+        public char Admin { get; internal set; }
+        public char Operator { get; internal set; }
+        public char Halfop { get; internal set; }
+        public char Voice { get; internal set; }
+    }
+
+    /// <summary>
     /// An event that occurs when the bot recieves the You have Been identified message from the Authentication Service.
     /// </summary>
     public class IdentificationCompleteMessage {
@@ -586,6 +598,11 @@ namespace SharpIRC.API {
     /// The users current privilegies in the channel.
     /// </summary>
     public enum UserLevel {
+        /// <summary>
+        /// IRC Operator / Oper.
+        /// </summary>
+        IRCOP,
+
         /// <summary>
         /// Is a channel owner.
         /// </summary>
@@ -673,5 +690,27 @@ namespace SharpIRC.API {
         /// The user.
         /// </summary>
         public Admin User { get; set; }
+    }
+
+    /// <summary>
+    /// The type of console message.
+    /// </summary>
+    public enum ConsoleMessageType {
+        /// <summary>
+        /// Normal
+        /// </summary>
+        Normal,
+        /// <summary>
+        /// Information
+        /// </summary>
+        Information,
+        /// <summary>
+        /// Warning
+        /// </summary>
+        Warning,
+        /// <summary>
+        /// Error
+        /// </summary>
+        Error
     }
 }

@@ -32,10 +32,10 @@ namespace SharpIRC.API {
         /// <param name="cmd">Command to match with.</param>
         /// <returns></returns>
         public static bool IsCommand(this string msg, string cmd) {
-            if (msg.StartsWith(Program.GlobalSettings.CommandPrefix.ToString())) {
+            if (msg.StartsWith(Program.Configuration.CommandPrefix.ToString())) {
                 return (String.Equals(msg.Split(' ')[0].Substring(1), cmd, StringComparison.OrdinalIgnoreCase));
             }
-            var myMatch = Regex.Match(msg, @"\(.*?\) " + Program.GlobalSettings.CommandPrefix + @"(.*)");
+            var myMatch = Regex.Match(msg, @"\(.*?\) " + Program.Configuration.CommandPrefix + @"(.*)");
             return myMatch.Success && (String.Equals(myMatch.Groups[1].Value.Split(' ')[0], cmd, StringComparison.OrdinalIgnoreCase));
         }
 
@@ -132,7 +132,7 @@ namespace SharpIRC.API {
         /// <param name="cmd">Sub command to check against.</param>
         /// <returns>True if it is a positive match.</returns>
         public static bool IsSubCommand(this string msg, string cmd) {
-            Match myMatch = Regex.Match(msg, @"\(.*?\) " + Program.GlobalSettings.CommandPrefix + @"(.*)");
+            Match myMatch = Regex.Match(msg, @"\(.*?\) " + Program.Configuration.CommandPrefix + @"(.*)");
             return myMatch.Success ? (String.Equals(msg.Split(' ')[2], cmd, StringComparison.OrdinalIgnoreCase)) : (String.Equals(msg.Split(' ')[1], cmd, StringComparison.OrdinalIgnoreCase));
         }
 
@@ -178,8 +178,14 @@ namespace SharpIRC.API {
         /// <param name="user">The user to check.</param>
         /// <returns>Returns true if the user is owner.</returns>
         public static bool IsOwner(this IRCUser user) {
-            if (user == null) return false;
-            return user.Level == UserLevel.Owner;
+            switch (user.Level) {
+                case UserLevel.IRCOP:
+                    return true;
+                case UserLevel.Owner:
+                    return true;
+                default:
+                    return false;
+            }
         }
 
         /// <summary>
@@ -189,7 +195,17 @@ namespace SharpIRC.API {
         /// <param name="channel">The channel to check</param>
         /// <returns>Returns true if the user is owner.</returns>
         public static bool IsOwner(this IRCUser user, Channel channel) {
-            return channel.Nicks.Any(mUser => mUser.Nick == user.Nick && mUser.IsOwner());
+            foreach (var mUser in channel.Nicks.Where(mUser => mUser.Nick == user.Nick)) {
+                switch (mUser.Level) {
+                    case UserLevel.IRCOP:
+                        return true;
+                    case UserLevel.Owner:
+                        return true;
+                    default:
+                        return false;
+                }
+            }
+            return false;
         }
 
         /// <summary>
@@ -200,6 +216,8 @@ namespace SharpIRC.API {
         public static bool IsAdmin(this IRCUser user) {
             if (user == null) return false;
             switch (user.Level) {
+                case UserLevel.IRCOP:
+                    return true;
                 case UserLevel.Owner:
                     return true;
                 case UserLevel.Admin:
@@ -218,6 +236,8 @@ namespace SharpIRC.API {
         public static bool IsAdmin(this IRCUser user, Channel channel) {
             foreach (var mUser in channel.Nicks.Where(mUser => mUser.Nick == user.Nick)) {
                 switch (mUser.Level) {
+                    case UserLevel.IRCOP:
+                        return true;
                     case UserLevel.Owner:
                         return true;
                     case UserLevel.Admin:
@@ -237,6 +257,8 @@ namespace SharpIRC.API {
         public static bool IsOperator(this IRCUser user) {
             if (user == null) return false;
             switch (user.Level) {
+                case UserLevel.IRCOP:
+                    return true;
                 case UserLevel.Owner:
                     return true;
                 case UserLevel.Admin:
@@ -257,6 +279,8 @@ namespace SharpIRC.API {
         public static bool IsOperator(this IRCUser user, Channel channel) {
             foreach (var mUser in channel.Nicks.Where(mUser => mUser.Nick == user.Nick)) {
                 switch (mUser.Level) {
+                    case UserLevel.IRCOP:
+                        return true;
                     case UserLevel.Owner:
                         return true;
                     case UserLevel.Admin:
@@ -278,6 +302,8 @@ namespace SharpIRC.API {
         public static bool IsHalfop(this IRCUser user) {
             if (user == null) return false;
             switch (user.Level) {
+                case UserLevel.IRCOP:
+                    return true;
                 case UserLevel.Owner:
                     return true;
                 case UserLevel.Admin:
@@ -300,6 +326,8 @@ namespace SharpIRC.API {
         public static bool IsHalfop(this IRCUser user, Channel channel) {
             foreach (var mUser in channel.Nicks.Where(mUser => mUser.Nick == user.Nick)) {
                 switch (mUser.Level) {
+                    case UserLevel.IRCOP:
+                        return true;
                     case UserLevel.Owner:
                         return true;
                     case UserLevel.Admin:
@@ -323,6 +351,8 @@ namespace SharpIRC.API {
         public static bool IsVoice(this IRCUser user) {
             if (user == null) return false;
             switch (user.Level) {
+                case UserLevel.IRCOP:
+                    return true;
                 case UserLevel.Owner:
                     return true;
                 case UserLevel.Admin:
@@ -347,6 +377,8 @@ namespace SharpIRC.API {
         public static bool IsVoice(this IRCUser user, Channel channel) {
             foreach (var mUser in channel.Nicks.Where(mUser => mUser.Nick == user.Nick)) {
                 switch (mUser.Level) {
+                    case UserLevel.IRCOP:
+                        return true;
                     case UserLevel.Owner:
                         return true;
                     case UserLevel.Admin:
@@ -393,6 +425,8 @@ namespace SharpIRC.API {
             foreach (FileInfo file in directory.GetFiles()) file.Delete();
             foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
         }
+
+        
     }
 
     /// <summary>

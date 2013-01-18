@@ -47,7 +47,7 @@ namespace SharpIRC.API
                 w.Close();
             }
             catch(Exception ex) {
-                Connect.PrintError(ex.InnerException.ToString());
+                Program.OutputConsole(ex.GetBaseException().ToString(), ConsoleMessageType.Error);
             }
         }
 
@@ -86,7 +86,7 @@ namespace SharpIRC.API
 
         internal static void StartAutomaticFileChecker()
         {
-            if (Program.GlobalSettings.AutomaticConfigurationReload)
+            if (Program.Configuration.AutomaticConfigurationReload)
             {
                 new Thread(delegate(object files)
                 {
@@ -114,17 +114,17 @@ namespace SharpIRC.API
         }
 
         private static void Serializer_UnknownElement(object sender, XmlElementEventArgs e) {
-            Connect.PrintError(String.Format("SharpIRC encountered an error parsing your database file in path: \"{0}\" and cannot proceed. Invalid Element. Line: {1}. Position: {2}. Error: {3}", Path.Combine(Program.StartupPath, "/Database/" + (sender as string)), e.LineNumber, e.LinePosition));
+            Program.OutputConsole(String.Format("SharpIRC encountered an error parsing your database file in path: \"{0}\" and cannot proceed. Invalid Element. Line: {1}. Position: {2}. Error: {3}", Path.Combine(Program.StartupPath, "/Database/" + (sender as string)), e.LineNumber, e.LinePosition), ConsoleMessageType.Error);
             Console.ReadLine();
             Environment.Exit(0);
         }
         private static void Serializer_UnknownAttribute(object sender, XmlAttributeEventArgs e) {
-            Connect.PrintError(String.Format("SharpIRC encountered an error parsing your database file in path: \"{0}\" and cannot proceed. Invalid Element. Line: {1}. Position: {2}. Error: {3}", Path.Combine(Program.StartupPath, "/Database/" + (sender as string)), e.LineNumber, e.LinePosition));
+            Program.OutputConsole(String.Format("SharpIRC encountered an error parsing your database file in path: \"{0}\" and cannot proceed. Invalid Element. Line: {1}. Position: {2}. Error: {3}", Path.Combine(Program.StartupPath, "/Database/" + (sender as string)), e.LineNumber, e.LinePosition), ConsoleMessageType.Error);
             Console.ReadLine();
             Environment.Exit(0);
         }
         private static void Serializer_UnknownNode(object sender, XmlNodeEventArgs e) {
-            Connect.PrintError(String.Format("SharpIRC encountered an error parsing your database file in path: \"{0}\" and cannot proceed. Invalid Element. Line: {1}. Position: {2}. Error: {3}", Path.Combine(Program.StartupPath, "/Database/" + (sender as string)), e.LineNumber, e.LinePosition));
+            Program.OutputConsole(String.Format("SharpIRC encountered an error parsing your database file in path: \"{0}\" and cannot proceed. Invalid Element. Line: {1}. Position: {2}. Error: {3}", Path.Combine(Program.StartupPath, "/Database/" + (sender as string)), e.LineNumber, e.LinePosition), ConsoleMessageType.Error);
             Console.ReadLine();
             Environment.Exit(0);
         }

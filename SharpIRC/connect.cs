@@ -28,7 +28,7 @@ using SharpIRC.API;
 
 namespace SharpIRC {
     /// <summary>
-    /// Maintaines a connection to the IRC Servers.
+    /// Maintains a connection to the IRC Servers.
     /// </summary>
     public class Connect {
 
@@ -54,24 +54,23 @@ namespace SharpIRC {
         {
             foreach (Wildcard wcard1 in con.NetworkConfiguration.Filter.Select(comp => new Wildcard(comp, RegexOptions.IgnoreCase)).Where(wcard1 => wcard1.IsMatch(data)))
             {
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Program.Comment("Warning: Intercepted filtered message: " + data);
-                Console.ForegroundColor = ConsoleColor.White;
+                Program.OutputConsole("Warning: Intercepted filtered message: " + data, ConsoleMessageType.Warning);
             }
+            if (!Program.Configuration.PostIRCCommunication) return;
             string pss;
             if (data.StartsWith("PRIVMSG NickServ : IDENTIFY"))
             {
                 pss = HidePassword(data.Split(' ')[4]);
                 string _data = data.Replace(data.Split(' ')[4], pss);
                 con.writer.WriteLine(data);
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine(con.ActiveNetwork + "> " + _data);
                 Console.ForegroundColor = ConsoleColor.White;
             }
             else
             {
                 con.writer.WriteLine(data);
-                Console.ForegroundColor = ConsoleColor.DarkCyan;
+                Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.WriteLine(con.ActiveNetwork + "> " + data);
                 Console.ForegroundColor = ConsoleColor.White;
             }
@@ -86,7 +85,7 @@ namespace SharpIRC {
             string ServerData = "";
             (new Thread(new ThreadStart(delegate { }))).Start();
             try {
-                Program.Comment("Connecting To " + connection.NetworkConfiguration.Address + ":" + connection.NetworkConfiguration.ServerPort);
+                Program.OutputConsole("Connecting To " + connection.NetworkConfiguration.Address + ":" + connection.NetworkConfiguration.ServerPort, ConsoleMessageType.Normal);
                 connection.Tcpclient = new TcpClient(connection.NetworkConfiguration.Address, connection.NetworkConfiguration.ServerPort);
                 if (connection.Tcpclient.Connected) {
                     if (connection.NetworkConfiguration.SSL) {
@@ -108,7 +107,7 @@ namespace SharpIRC {
                                 SendToServer(connection, String.Format("USER {0} {1} * :{2}", connection.NetworkConfiguration.Ident, "8", connection.NetworkConfiguration.RealName));
                                 connection.pingSender = new PingSender(connection);
                                 connection.pingSender.Start();
-                                if (Program.GlobalSettings.StartupDelay) {
+                                if (Program.Configuration.StartupDelay) {
                                     connection.DelayActive = true;
                                     new Thread(delegate() {
                                         Thread.Sleep(15000);
@@ -122,9 +121,10 @@ namespace SharpIRC {
                             new Events().IRCMessage(connection, ServerData);
                             string[] smsg = ServerData.Split(' ');
                             string[] ims = JoinString(smsg, 0, true).Split(' ');
+                            string message = "";
 
 
-                            if (smsg[1] != "PONG") Console.WriteLine(connection.ActiveServer + " => " + ServerData);
+                            if (smsg[1] != "PONG" && Program.Configuration.PostIRCCommunication) Console.WriteLine(connection.ActiveServer + " => " + ServerData);
                             if (smsg[0] == "PING") SendToServer(connection, "PONG " + ServerData.Split(' ')[1]);
                             switch (smsg[1]) {
                                 case "PING":
@@ -135,7 +135,7 @@ namespace SharpIRC {
 
                                 case "ERROR": {
                                     string errormessage = JoinString(smsg, 2, true);
-                                    PrintError("Connection Failed: " + errormessage);
+                                    Program.OutputConsole("Connection Failed: " + errormessage, ConsoleMessageType.Error);
                                     Reconnect(connection);
                                     break;
                                 }
@@ -162,6 +162,7 @@ namespace SharpIRC {
                                                 break;
                                             case "PREFIX":
                                                 connection.Prefixes = word.Split('=')[1];
+                                                Functions.AssertUModes(connection, connection.Prefixes);
                                                 break;
                                             case "NETWORK":
                                                 connection.ActiveNetwork = word.Split('=')[1];
@@ -184,7 +185,7 @@ namespace SharpIRC {
                                     break;
 
                                 case "PRIVMSG":
-                                    string message = JoinString(smsg, 3, true);
+                                    message = JoinString(smsg, 3, true);
                                     if (smsg[3].Contains(((char) 1).ToString())) {
                                         if (ims[3] == ":" + ((char) 1) + "ACTION") {
                                             if (ims[2].IsChannel()) new Events().ChanAction(connection, message.Substring(8), ims[0], ims[2]);
@@ -241,11 +242,11 @@ namespace SharpIRC {
                     }
                 }
             } catch (SocketException ex) {
-                PrintError("Connection Failed: " + ex.Message.ToString());
+                Program.OutputConsole("Connection Failed: " + ex.Message, ConsoleMessageType.Error);
                 Reconnect(connection);
             } catch (Exception ex) {
-                PrintError(ex.Source + ": " + ex.Message);
-                Functions.LogError(ex.InnerException.ToString());
+                Program.OutputConsole(ex.Source + ": " + ex.Message, ConsoleMessageType.Error);
+                Functions.LogError(ex.GetBaseException().ToString());
             }
         }
 
@@ -254,21 +255,11 @@ namespace SharpIRC {
         /// </summary>
         /// <param name="connection">Connection object to use.</param>
         public static void Reconnect(IRCConnection connection) {
-            Program.Comment(String.Format("Retrying to Connect to: \"{0}\" in 5 seconds..", connection.NetworkConfiguration.Address));
+            Program.OutputConsole(String.Format("Retrying to Connect to: \"{0}\" in 5 seconds..", connection.NetworkConfiguration.Address), ConsoleMessageType.Normal);
             Thread.Sleep(5000);
             Program.Connections.Add(new IRCConnection {NetworkConfiguration = connection.NetworkConfiguration});
             connection.Terminate();
             new Thread(() => ConnnectToNetwork(connection)).Start();
-        }
-
-        /// <summary>
-        /// Prints an error on console.
-        /// </summary>
-        /// <param name="message">Error message to print.</param>
-        public static void PrintError(string message) {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine(message);
-            Console.ForegroundColor = ConsoleColor.White;
         }
 
         /// <summary>

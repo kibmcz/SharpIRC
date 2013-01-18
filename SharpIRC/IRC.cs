@@ -81,6 +81,11 @@ namespace SharpIRC {
         public string Prefixes { get; set; }
 
         /// <summary>
+        /// The defined IRCD usermodes.
+        /// </summary>
+        public IRCDUMode Umodes { get; set; }
+
+        /// <summary>
         /// Name modes supported by this server.
         /// </summary>
         public string SupportedChannelModes { get; set; }

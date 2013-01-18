@@ -118,19 +118,19 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="Settings" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\Resources\Settings.xml;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;Windows-1252</value>
-  </data>
   <data name="icon" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\icon.ico;System.Drawing.Icon, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="acceessed_your_authentication_password">
-    <value xml:space="preserve"> has acceessed your authentication password.</value>
+  <data name="acceessed_your_authentication_password" xml:space="preserve">
+    <value> has acceessed your authentication password.</value>
   </data>
-  <data name="Sensitive_data_has_been_accessed_">
-    <value xml:space="preserve">Sensitive data has been accessed.</value>
+  <data name="Sensitive_data_has_been_accessed_" xml:space="preserve">
+    <value>Sensitive data has been accessed.</value>
   </data>
-  <data name="Program_WritePermission_Filesystem_access_test_">
-    <value xml:space="preserve">Filesystem access test.</value>
+  <data name="Program_WritePermission_Filesystem_access_test_" xml:space="preserve">
+    <value>Filesystem access test.</value>
+  </data>
+  <data name="sharpirc" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\resources\sharpirc.config;System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089;utf-8</value>
   </data>
 </root>

@@ -21,13 +21,14 @@ using System.Linq;
 using System.Reflection;
 using System.Threading;
 using System.Xml.Serialization;
+using SharpIRC.API;
 using SharpIRC.Properties;
 
 namespace SharpIRC {
     /// <summary>
     /// The Global Configuration class for the bot.
     /// </summary>
-    public class Settings {
+    public class Config {
         /// <summary>
         /// List of admins/superusers for the bot.
         /// </summary>
@@ -47,6 +48,11 @@ namespace SharpIRC {
         /// Log all non-server related content to file.
         /// </summary>
         public bool LogComments { get; set; }
+
+        /// <summary>
+        /// Whether or not to post IRC communication to console.
+        /// </summary>
+        public bool PostIRCCommunication { get; set; }
 
         /// <summary>
         /// Log server traffic to file in a chat-history style format. Seperated by user and channel.
@@ -115,7 +121,7 @@ namespace SharpIRC {
         public string AuthenticationPassword {
             get {
                 var xy = new StackTrace().GetFrame(1).GetMethod().ReflectedType.ToString();
-                Connect.PrintError(xy + Resources.acceessed_your_authentication_password);
+                Program.OutputConsole(xy + Resources.acceessed_your_authentication_password, ConsoleMessageType.Warning);
                 return _authpassword;
             }
             set { _authpassword = value; }
