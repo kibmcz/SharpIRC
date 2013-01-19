@@ -140,7 +140,7 @@ namespace SharpIRC {
 
                             if (smsg[1] != "PONG" && Program.Configuration.PostIRCCommunication) Console.WriteLine(connection.ActiveServer + Resources.toNetwork + ServerData);
                             if (smsg[0] == "PING") SendToServer(connection, "PONG " + ServerData.Split(' ')[1]);
-                            if (ServerData == "AUTHENTICATE +") SendToServer(connection, "AUTHENTICATE " + Functions.Base64Encode("Lexi" + "\0" + connection.Configuration.AuthenticationPassword));
+                            if (ServerData == "AUTHENTICATE +") SendToServer(connection, "AUTHENTICATE " + Functions.Base64Encode(String.Format("{0}\0{1}\0{2}", connection.Configuration.Nick, connection.Configuration.AccountName, connection.Configuration.AuthenticationPassword)));
                             switch (smsg[1]) {
                                 case "PING":
                                     {

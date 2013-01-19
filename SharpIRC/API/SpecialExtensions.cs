@@ -62,9 +62,6 @@ namespace SharpIRC.API {
         /// <param name="ID">Unique ID (GUID)</param>
         /// <returns>An IRC Connection object.</returns>
         public static IRCConnection GetConnectionByGUID(this Guid ID) {
-            foreach (var x in Program.Connections) {
-                if (x.Configuration.ID == ID) return x;
-            }
             return Program.Connections.FirstOrDefault(con => con.Configuration.ID == ID);
         }
 

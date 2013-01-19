@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PermissionIndex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <Commands>
+    <Command Name="topic">
+      <Permissions Type="ChannelStatus" Channel="">Halfop</Permissions>
+    </Command>
+    <Command Name="static">
+      <Permissions Type="ChannelStatus" Channel="">Halfop</Permissions>
+    </Command>
+    <Command Name="owner">
+      <Permissions Type="ChannelStatus" Channel="">Halfop</Permissions>
+    </Command>
+    <Command Name="status">
+      <Permissions Type="ChannelStatus" Channel="">Halfop</Permissions>
+    </Command>
+    <Command Name="divider">
+      <Permissions Type="ChannelStatus" Channel="">Halfop</Permissions>
+    </Command>
+    <Command Name="decoration">
+      <Permissions Type="ChannelStatus" Channel="">Halfop</Permissions>
+    </Command>
+    <Command Name="prefix">
+      <Permissions Type="ChannelStatus" Channel="">Halfop</Permissions>
+    </Command>
+    <Command Name="trestore">
+      <Permissions Type="ChannelStatus" Channel="">Halfop</Permissions>
+    </Command>
+  </Commands>
+</PermissionIndex>

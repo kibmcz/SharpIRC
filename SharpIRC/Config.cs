@@ -150,6 +150,11 @@ namespace SharpIRC {
         public bool SASL { get; set; }
 
         /// <summary>
+        /// Account name (Main Nick) to use with SASL authentication.
+        /// </summary>
+        public string AccountName { get; set; }
+
+        /// <summary>
         /// The nick of the authentication service used by this network. i.e: NickServ. Irrelevant if SASL is enabled.
         /// </summary>
         public string AuthenticationService { get; set; }
