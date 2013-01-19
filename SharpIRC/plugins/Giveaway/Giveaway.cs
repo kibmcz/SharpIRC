@@ -26,7 +26,7 @@ namespace SharpIRC {
 
         public override void ChanMsg(ChannelMessage message) {
             if (message.Message.IsCommand("giveaway") && message.Message.GetMessageWithoutCommand().Length > 0) {
-                if (message.Sender.IsOperator()) {
+                if (message.Sender.hasCommandPermission(message.Connection, message.Channel, "giveaway")) {
                     giveaway = message.Message.GetMessageWithoutCommand();
                     Commands.SendPrivMsg(message.Connection, message.Channel.Name, String.Format("Giveaway object now set to: {0}", message.Message.GetMessageWithoutCommand()));
                 }

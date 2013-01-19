@@ -41,19 +41,35 @@ namespace SharpIRC {
         public override void ConfigurationChange(ConfigurationFile file) { if (file.Name == "Topic") Topics = ConfigurationAPI.LoadConfigurationFile<TopicList>("Topic"); }
 
         public override void ChanMsg(ChannelMessage message) {
-            if (message.Message.IsCommand("topic") && message.Sender.IsHalfop()) SetTopic(message.Connection, message.Channel, 0, message.Message.GetMessageWithoutCommand());
-            if (message.Message.IsCommand("static") && message.Sender.IsHalfop()) SetTopic(message.Connection, message.Channel, 1, message.Message.GetMessageWithoutCommand());
-            if (message.Message.IsCommand("owner") && message.Sender.IsHalfop()) SetTopic(message.Connection, message.Channel, 2, message.Message.GetMessageWithoutCommand());
-            if (message.Message.IsCommand("status") && message.Sender.IsHalfop()) SetTopic(message.Connection, message.Channel, 3, message.Message.GetMessageWithoutCommand());
-            if (message.Message.IsCommand("divider") && message.Sender.IsHalfop()) SetTopic(message.Connection, message.Channel, 4, message.Message.GetMessageWithoutCommand());
-            if (message.Message.IsCommand("decoration") && message.Sender.IsHalfop()) SetTopic(message.Connection, message.Channel, 5, message.Message.GetMessageWithoutCommand());
-            if (message.Message.IsCommand("prefix") && message.Sender.IsHalfop()) SetTopic(message.Connection, message.Channel, 6, message.Message.GetMessageWithoutCommand());
+            if (message.Message.IsCommand("topic") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "topic")) SetTopic(message.Connection, message.Channel, 0, message.Message.GetMessageWithoutCommand());
+            if (message.Message.IsCommand("static") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "static")) SetTopic(message.Connection, message.Channel, 1, message.Message.GetMessageWithoutCommand());
+            if (message.Message.IsCommand("owner") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "owner")) SetTopic(message.Connection, message.Channel, 2, message.Message.GetMessageWithoutCommand());
+            if (message.Message.IsCommand("status") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "status")) SetTopic(message.Connection, message.Channel, 3, message.Message.GetMessageWithoutCommand());
+            if (message.Message.IsCommand("divider") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "divider")) SetTopic(message.Connection, message.Channel, 4, message.Message.GetMessageWithoutCommand());
+            if (message.Message.IsCommand("decoration") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "decoration")) SetTopic(message.Connection, message.Channel, 5, message.Message.GetMessageWithoutCommand());
+            if (message.Message.IsCommand("prefix") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "prefix")) SetTopic(message.Connection, message.Channel, 6, message.Message.GetMessageWithoutCommand());
+            if (message.Message.IsCommand("trestore") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "trestore")) {
+                var tdata = new TopicData();
+                tdata = (from x in Topics.Networks
+                             where x.ID == message.Connection.Configuration.ID.ToString()
+                             from y in x.Channels
+                             where y.Name == message.Channel.Name
+                             select y).FirstOrDefault();
+                Commands.SendTopic(message.Connection, message.Channel, String.Format("{0} {1} {2} {3} {4} {5} {3} {6} {0}",
+                    tdata.Decoration,
+                    tdata.Prefix,
+                    tdata.Topic,
+                    tdata.Divider,
+                    tdata.Owner,
+                    tdata.Status,
+                    tdata.Static));
+            }
         }
 
         public static void SetTopic(IRCConnection con, Channel channel, int tpart, string msg) {
-            TopicNetwork oldnet = (from net in Topics.Networks where net.ID == con.NetworkConfiguration.ID.ToString() select net).FirstOrDefault();
+            TopicNetwork oldnet = (from net in Topics.Networks where net.ID == con.Configuration.ID.ToString() select net).FirstOrDefault();
             if (oldnet == null) {
-                var addnet = new TopicNetwork {ID = con.NetworkConfiguration.ID.ToString()};
+                var addnet = new TopicNetwork {ID = con.Configuration.ID.ToString()};
                 oldnet = addnet;
             }
             TopicData olddata = (from chan in oldnet.Channels where chan.Name == channel.Name select chan).FirstOrDefault();
@@ -70,7 +86,7 @@ namespace SharpIRC {
             if (tpart == 6) olddata.Prefix = msg;
             oldnet.Channels.RemoveAll(x => x.Name == channel.Name);
             oldnet.Channels.Add(olddata);
-            Topics.Networks.RemoveAll(x => x.ID == con.NetworkConfiguration.ID.ToString());
+            Topics.Networks.RemoveAll(x => x.ID == con.Configuration.ID.ToString());
             Topics.Networks.Add(oldnet);
             ConfigurationAPI.SaveConfigurationFile(Topics, "Topic");
             Commands.SendTopic(con, channel, String.Format("{0} {1} {2} {3} {4} {5} {3} {6} {0}",

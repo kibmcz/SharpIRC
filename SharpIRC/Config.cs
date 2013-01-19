@@ -78,6 +78,26 @@ namespace SharpIRC {
         /// Splits and sends channel messages in bulks of 420 characters to avoid command output from being cut off by server.
         /// </summary>
         public bool SplitCommandOutput { get; set; }
+
+        /// <summary>
+        /// Enables the built in flood/spam control system that limits commands per 10 seconds. Exceeding this will trigger a temporary ignore.
+        /// </summary>
+        public bool FloodControl { get; set; }
+
+        /// <summary>
+        /// The number of commands any user should be able to request per 10 seconds.
+        /// </summary>
+        public int UserLimit { get; set; }
+
+        /// <summary>
+        /// The number of commands any channel should be able to request per 10 seconds.
+        /// </summary>
+        public int ChannelLimit { get; set; }
+
+        /// <summary>
+        /// The number of seconds an ignore should last when triggered by a channel or user.
+        /// </summary>
+        public int IgnoreSeconds { get; set; }
     }
 
     /// <summary>
@@ -89,10 +109,7 @@ namespace SharpIRC {
         /// </summary>
         public List<string> Filter = new List<string>();
 
-        /// <summary>
-        /// Whether or not to automatically connect to this network on startup.
-        /// </summary>
-        public bool AutoConnect { get; set; }
+        [XmlAttribute("Enabled")] public bool Enabled { get; set; }
 
         /// <summary>
         /// The IRC IDENTD of the bot.
@@ -126,9 +143,14 @@ namespace SharpIRC {
             }
             set { _authpassword = value; }
         }
-       
+
         /// <summary>
-        /// The nick of the authentication service used by this network.
+        /// Whether or not to use IRCv3 SASL authentication.
+        /// </summary>
+        public bool SASL { get; set; }
+
+        /// <summary>
+        /// The nick of the authentication service used by this network. i.e: NickServ. Irrelevant if SASL is enabled.
         /// </summary>
         public string AuthenticationService { get; set; }
 

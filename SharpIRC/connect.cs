@@ -18,13 +18,16 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Security.Cryptography.X509Certificates;
 using System.Timers;
 using SharpIRC.API;
+using SharpIRC.Properties;
 
 namespace SharpIRC {
     /// <summary>
@@ -52,26 +55,34 @@ namespace SharpIRC {
 
         internal static void SendToServer(IRCConnection con, string data)
         {
-            foreach (Wildcard wcard1 in con.NetworkConfiguration.Filter.Select(comp => new Wildcard(comp, RegexOptions.IgnoreCase)).Where(wcard1 => wcard1.IsMatch(data)))
+            foreach (Wildcard wcard1 in con.Configuration.Filter.Select(comp => new Wildcard(comp, RegexOptions.IgnoreCase)).Where(wcard1 => wcard1.IsMatch(data)))
             {
                 Program.OutputConsole("Warning: Intercepted filtered message: " + data, ConsoleMessageType.Warning);
             }
             if (!Program.Configuration.PostIRCCommunication) return;
             string pss;
-            if (data.StartsWith("PRIVMSG NickServ : IDENTIFY"))
-            {
+            if (data.StartsWith("PRIVMSG NickServ : IDENTIFY")) {
                 pss = HidePassword(data.Split(' ')[4]);
                 string _data = data.Replace(data.Split(' ')[4], pss);
                 con.writer.WriteLine(data);
                 Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine(con.ActiveNetwork + "> " + _data);
+                Console.WriteLine(con.ActiveNetwork + Resources.Connect_SendToServer___ + _data);
                 Console.ForegroundColor = ConsoleColor.White;
+
             }
+            /*else if (data.StartsWith("AUTHENTICATE") && !data.Contains("PLAIN")) {
+                pss = HidePassword(data.Split(' ')[1]);
+                string _data = data.Replace(data.Split(' ')[1], pss);
+                con.writer.WriteLine(data);
+                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.WriteLine(con.ActiveNetwork + Resources.Connect_SendToServer___ + _data);
+                Console.ForegroundColor = ConsoleColor.White;
+            }*/
             else
             {
                 con.writer.WriteLine(data);
                 Console.ForegroundColor = ConsoleColor.Magenta;
-                Console.WriteLine(con.ActiveNetwork + "> " + data);
+                Console.WriteLine(con.ActiveNetwork + Resources.Connect_SendToServer___ + data);
                 Console.ForegroundColor = ConsoleColor.White;
             }
             con.writer.Flush();
@@ -85,26 +96,29 @@ namespace SharpIRC {
             string ServerData = "";
             (new Thread(new ThreadStart(delegate { }))).Start();
             try {
-                Program.OutputConsole("Connecting To " + connection.NetworkConfiguration.Address + ":" + connection.NetworkConfiguration.ServerPort, ConsoleMessageType.Normal);
-                connection.Tcpclient = new TcpClient(connection.NetworkConfiguration.Address, connection.NetworkConfiguration.ServerPort);
+                Program.OutputConsole("Connecting To " + connection.Configuration.Address + ":" + connection.Configuration.ServerPort, ConsoleMessageType.Normal);
+                connection.Tcpclient = new TcpClient(connection.Configuration.Address, connection.Configuration.ServerPort);
                 if (connection.Tcpclient.Connected) {
-                    if (connection.NetworkConfiguration.SSL) {
-                        var reader = new BinaryReader(new SslStream(connection.Tcpclient.GetStream(), true));
-
+                    if (connection.Configuration.SSL) {
+                        connection.sslStream = new SslStream(connection.Tcpclient.GetStream(), false, ValidateServerCertificate, null);
+                        connection.sslStream.AuthenticateAsClient(connection.Configuration.Address);
+                        connection.reader = new StreamReader(connection.sslStream);
+                        connection.writer = new StreamWriter(connection.sslStream);
                     }
                     else {
                         connection.stream = connection.Tcpclient.GetStream();
                         connection.reader = new StreamReader(connection.stream);
                         connection.writer = new StreamWriter(connection.stream);
-                        connection.ActiveServer = connection.NetworkConfiguration.Address;
-                        connection.ActiveNetwork = connection.NetworkConfiguration.Address;
                     }
+                    connection.ActiveServer = connection.Configuration.Address;
+                    connection.ActiveNetwork = connection.Configuration.Address;
                     while (true) {
                         while (connection.Tcpclient.Connected && (ServerData = connection.reader.ReadLine()) != null) {
                             if (!connection.Connected) {
                                 connection.Connected = true;
-                                SendToServer(connection, "NICK " + connection.NetworkConfiguration.Nick);
-                                SendToServer(connection, String.Format("USER {0} {1} * :{2}", connection.NetworkConfiguration.Ident, "8", connection.NetworkConfiguration.RealName));
+                                if (connection.Configuration.SASL) SendToServer(connection, "CAP REQ :sasl");
+                                SendToServer(connection, "NICK " + connection.Configuration.Nick);
+                                SendToServer(connection, String.Format("USER {0} 8 1 :{1}", connection.Configuration.Ident, connection.Configuration.RealName));
                                 connection.pingSender = new PingSender(connection);
                                 connection.pingSender.Start();
                                 if (Program.Configuration.StartupDelay) {
@@ -119,13 +133,14 @@ namespace SharpIRC {
 
                             }
                             new Events().IRCMessage(connection, ServerData);
-                            string[] smsg = ServerData.Split(' ');
-                            string[] ims = JoinString(smsg, 0, true).Split(' ');
+                            var smsg = ServerData.Split(' ');
+                            var ims = JoinString(smsg, 0, true).Split(' ');
                             string message = "";
 
 
-                            if (smsg[1] != "PONG" && Program.Configuration.PostIRCCommunication) Console.WriteLine(connection.ActiveServer + " => " + ServerData);
+                            if (smsg[1] != "PONG" && Program.Configuration.PostIRCCommunication) Console.WriteLine(connection.ActiveServer + Resources.toNetwork + ServerData);
                             if (smsg[0] == "PING") SendToServer(connection, "PONG " + ServerData.Split(' ')[1]);
+                            if (ServerData == "AUTHENTICATE +") SendToServer(connection, "AUTHENTICATE " + Functions.Base64Encode("Lexi" + "\0" + connection.Configuration.AuthenticationPassword));
                             switch (smsg[1]) {
                                 case "PING":
                                     {
@@ -134,7 +149,7 @@ namespace SharpIRC {
                                     }
 
                                 case "ERROR": {
-                                    string errormessage = JoinString(smsg, 2, true);
+                                    var errormessage = JoinString(smsg, 2, true);
                                     Program.OutputConsole("Connection Failed: " + errormessage, ConsoleMessageType.Error);
                                     Reconnect(connection);
                                     break;
@@ -145,8 +160,8 @@ namespace SharpIRC {
                                     connection.ServerSoftware = smsg[4];
                                     break;
                                 case "005":
-                                    string[] fe = JoinString(smsg, 3, false).Split(' ');
-                                    foreach (string word in fe) {
+                                    var fe = JoinString(smsg, 3, false).Split(' ');
+                                    foreach (var word in fe) {
                                         switch (word.Split('=')[0]) {
                                             case "MAXCHANNELS":
                                                 connection.MaxChannels = Convert.ToInt32(word.Split('=')[1]);
@@ -176,11 +191,24 @@ namespace SharpIRC {
                                 case "443":
                                     SendToServer(connection, "NICK " + smsg[3] + "_");
                                     break;
+                                case "CAP": 
+                                    if (smsg[3] == "ACK") SendToServer(connection, "AUTHENTICATE PLAIN");
+                                    break;
+                                case "903":
+                                    new Events().Authorized(connection);
+                                    SendToServer(connection, "CAP END");
+                                    connection.loginTimeout.Stop();
+                                    break;
+                                case "904":
+                                case "905":
+                                    Program.OutputConsole(connection.ActiveNetwork + " : SASL AUTHENTICATION FAILED", ConsoleMessageType.Error);
+                                    SendToServer(connection, "CAP END");
+                                    break;
                                 case "376":
                                 case "422":
-                                    if (connection.NetworkConfiguration.IdentifyOnConnect) SendToServer(connection,"NICKSERV IDENTIFY " + connection.NetworkConfiguration.AuthenticationPassword);
+                                    if (connection.Configuration.IdentifyOnConnect && !connection.Configuration.SASL) SendToServer(connection,"NICKSERV IDENTIFY " + connection.Configuration.AuthenticationPassword);
                                     Commands.SendModes(connection, connection.CurrentNick, "+B");
-                                    if (connection.NetworkConfiguration.SetupChannel.Length > 0) Commands.SendJoin(connection, connection.NetworkConfiguration.SetupChannel);
+                                    if (connection.Configuration.SetupChannel.Length > 0) Commands.SendJoin(connection, connection.Configuration.SetupChannel);
                                     new Events().Connected(connection);
                                     break;
 
@@ -255,9 +283,9 @@ namespace SharpIRC {
         /// </summary>
         /// <param name="connection">Connection object to use.</param>
         public static void Reconnect(IRCConnection connection) {
-            Program.OutputConsole(String.Format("Retrying to Connect to: \"{0}\" in 5 seconds..", connection.NetworkConfiguration.Address), ConsoleMessageType.Normal);
+            Program.OutputConsole(String.Format("Retrying to Connect to: \"{0}\" in 5 seconds..", connection.Configuration.Address), ConsoleMessageType.Normal);
             Thread.Sleep(5000);
-            Program.Connections.Add(new IRCConnection {NetworkConfiguration = connection.NetworkConfiguration});
+            Program.Connections.Add(new IRCConnection {Configuration = connection.Configuration});
             connection.Terminate();
             new Thread(() => ConnnectToNetwork(connection)).Start();
         }
@@ -299,10 +327,15 @@ namespace SharpIRC {
               X509Certificate certificate,
               X509Chain chain,
               SslPolicyErrors sslPolicyErrors) {
-            if (sslPolicyErrors == SslPolicyErrors.None)
+            if (sslPolicyErrors == SslPolicyErrors.None) {
+                Program.OutputConsole(String.Format("SSL Certificate approved.\r\n" +
+                                                    "Name: {0}\r\n" +
+                                                    "Issued by: {1}\r\n" +
+                                                    "Expires: {2}\r\n", certificate.Subject, certificate.Issuer, certificate.GetExpirationDateString()), ConsoleMessageType.Information);
                 return true;
+            }
 
-            Console.WriteLine("Certificate error: {0}", sslPolicyErrors);
+            Program.OutputConsole("SSL Certificate Error: "+ sslPolicyErrors, ConsoleMessageType.Error);
 
             // Do not allow this client to communicate with unauthenticated servers. 
             return false;

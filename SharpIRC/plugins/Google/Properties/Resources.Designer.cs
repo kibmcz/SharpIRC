@@ -59,21 +59,5 @@ namespace Google.Properties {
                 resourceCulture = value;
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
-        ///&lt;PermissionIndex xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
-        ///  &lt;Commands&gt;
-        ///    &lt;Command Name=&quot;google&quot;&gt;
-        ///      &lt;Permissions Type=&quot;Normal&quot; /&gt;
-        ///    &lt;/Command&gt;
-        ///  &lt;/Commands&gt;
-        ///&lt;/PermissionIndex&gt;.
-        /// </summary>
-        internal static string Permissions {
-            get {
-                return ResourceManager.GetString("Permissions", resourceCulture);
-            }
-        }
     }
 }

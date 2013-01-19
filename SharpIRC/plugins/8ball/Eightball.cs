@@ -24,7 +24,7 @@ using SharpIRC.API;
 namespace SharpIRC {
     [Extension] public class Eightball : PluginInterface {
         public override void ChanMsg(ChannelMessage message) {
-            if (message.Message.IsCommand("8ball")) {
+            if (message.Message.IsCommand("8ball") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "8ball")) {
                 if (Validate8Ball(message.Message.GetMessageWithoutCommand())) {
                     var ra = new[] {
                         "As I see it, yes",

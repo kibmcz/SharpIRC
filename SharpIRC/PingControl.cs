@@ -29,7 +29,7 @@ namespace SharpIRC {
         public static void Run(IRCConnection con) {
             try {
                 while (true) {
-                    con.writer.WriteLine("PING " + con.NetworkConfiguration.Address);
+                    con.writer.WriteLine("PING " + con.Configuration.Address);
                     con.writer.Flush();
                     Thread.Sleep(60000);
                 }

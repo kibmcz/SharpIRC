@@ -61,11 +61,20 @@ namespace SharpIRC.Properties {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to  has acceessed your authentication password..
+        ///   Looks up a localized string similar to  has accessed your authentication password..
         /// </summary>
         internal static string acceessed_your_authentication_password {
             get {
                 return ResourceManager.GetString("acceessed_your_authentication_password", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to &gt; .
+        /// </summary>
+        internal static string Connect_SendToServer___ {
+            get {
+                return ResourceManager.GetString("Connect_SendToServer___", resourceCulture);
             }
         }
         
@@ -101,13 +110,22 @@ namespace SharpIRC.Properties {
         ///   Looks up a localized string similar to &lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-8&quot;?&gt;
         ///
         ///&lt;!-- This is the main configuration file for SharpIRC. It is absolutely vital to configure this before your first startup. --&gt;
-        ///&lt;Settings xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
+        ///&lt;Config xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot; xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot;&gt;
         ///  &lt;!-- Enter the ASCII character code for what you want as your command prefix. i.e for &quot;!google&quot; your prefix would be ! or &quot;33&quot;
-        ///  To find out what the ASCII character code for the character you want is, visit http://www.asciitable.com [rest of string was truncated]&quot;;.
+        ///  To find out what the ASCII character code for the character you want is, visit http://www.asciitable.com/  [rest of string was truncated]&quot;;.
         /// </summary>
         internal static string sharpirc {
             get {
                 return ResourceManager.GetString("sharpirc", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to  =&gt; .
+        /// </summary>
+        internal static string toNetwork {
+            get {
+                return ResourceManager.GetString("toNetwork", resourceCulture);
             }
         }
     }

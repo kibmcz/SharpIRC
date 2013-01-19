@@ -72,6 +72,12 @@ namespace SharpIRC {
 
         private static void Main(string[] args) {
             try {
+                if (File.Exists(Path.Combine(StartupPath, "motd.txt"))) {
+                    using (var sr = new StreamReader(Path.Combine(StartupPath, "motd.txt"))) {
+                        var line = sr.ReadToEnd();
+                        Console.WriteLine(line);
+                    }
+                }
                 if (Info.IsRunningMono()) {
                     if (Info.MonoFrameworkVersion().CompareTo(new Version(2, 6, 10)) < 0) {
                         Program.OutputConsole(String.Format(
@@ -115,14 +121,14 @@ namespace SharpIRC {
                 }
                 Program.OutputConsole("Loading plugins..", ConsoleMessageType.Normal);
                 LoadPlugins();
-                //Permissions.PermissionsList = Permissions.LoadPermissionsData();
+                Permissions.PermissionsList = Permissions.LoadPermissionsData();
 
                 foreach (var net in Configuration.Networks.Where(net => net.ID == Guid.Empty)) {
                     net.ID = Guid.NewGuid();
                     SerializeDataFile(Configuration);
                 }
-                foreach (var netw in Configuration.Networks) {
-                    var con = new IRCConnection {NetworkConfiguration = netw};
+                foreach (var netw in Configuration.Networks.Where(x => x.Enabled)) {
+                    var con = new IRCConnection {Configuration = netw};
                     new Thread(() => Connect.ConnnectToNetwork(con)).Start();
                 }
             }
@@ -251,7 +257,8 @@ namespace SharpIRC {
             switch (type) {
                 case ConsoleMessageType.Normal: Console.ForegroundColor = ConsoleColor.DarkGray;
                     break;
-                case ConsoleMessageType.Information: Console.ForegroundColor = ConsoleColor.Blue;
+                case ConsoleMessageType.Information:
+                    Console.ForegroundColor = ConsoleColor.Cyan;
                     break;
                 case ConsoleMessageType.Warning:
                     Console.ForegroundColor = ConsoleColor.Yellow;

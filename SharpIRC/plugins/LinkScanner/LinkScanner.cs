@@ -40,8 +40,7 @@ namespace SharpIRC
         }
 
         public override void ChanMsg(ChannelMessage message) {
-            //if (IsWhitelisted(message.Connection.NetworkConfiguration.ID, message.Channel.Name) || !config.EnableWhitelist)  {
-            if (true) {
+            if (IsWhitelisted(message.Connection.Configuration.ID, message.Channel.Name))  {
                 var regx = new Regex("http://([\\w+?\\.\\w+])+([a-zA-Z0-9\\~\\!\\@\\#\\$\\%\\^\\&amp;\\*\\(\\)_\\-\\=\\+\\\\\\/\\?\\.\\:\\;\\'\\,]*)?", RegexOptions.IgnoreCase);
                 MatchCollection mactches = regx.Matches(message.Message);
                 foreach (Match match in mactches) {
@@ -73,26 +72,41 @@ namespace SharpIRC
                     }).Start();
                 }
             }
-            if (config.EnableWhitelist) {
-                if (message.Message.IsCommand("linkscan") && (message.Sender.IsOperator() || message.Sender.IsBotAdmin())) {
-                    if (message.Message.IsSubCommand("enable")) {
-                        if (config.Whitelist.Any(chan => chan.Network == message.Connection.NetworkConfiguration.ID && chan.Channel == message.Channel.Name)) {
-                            Commands.SendNotice(message.Connection,message.Sender.Nick, "This channel already has linkscanner enabled.");
-                            return;
-                        }
-                        config.Whitelist.Add(new WhitelistChan() { Channel = message.Channel.Name, Network = message.Connection.NetworkConfiguration.ID });
+            if (message.Message.IsCommand("linkscan") && (message.Sender.IsOperator() || message.Sender.IsBotAdmin())) {
+                if (message.Message.IsSubCommand("enable")) {
+                    if (
+                        config.Whitelist.Any(
+                            chan =>
+                            chan.Network == message.Connection.Configuration.ID &&
+                            chan.Channel == message.Channel.Name)) {
+                        Commands.SendNotice(message.Connection, message.Sender.Nick,
+                                            "This channel already has linkscanner enabled.");
+                        return;
+                    }
+                    config.Whitelist.Add(new WhitelistChan() {
+                                                                 Channel = message.Channel.Name,
+                                                                 Network = message.Connection.Configuration.ID
+                                                             });
+                    ConfigurationAPI.SaveConfigurationFile(config, "LinkScanner");
+                    Commands.SendNotice(message.Connection, message.Sender.Nick,
+                                        "LinkScanner is now enabled in this channel.");
+                }
+                if (message.Message.IsSubCommand("disable")) {
+                    if (
+                        config.Whitelist.Any(
+                            chan =>
+                            chan.Network == message.Connection.Configuration.ID &&
+                            chan.Channel == message.Channel.Name)) {
+                        config.Whitelist.RemoveAll(
+                            chan =>
+                            chan.Network == message.Connection.Configuration.ID &&
+                            chan.Channel == message.Channel.Name);
                         ConfigurationAPI.SaveConfigurationFile(config, "LinkScanner");
-                        Commands.SendNotice(message.Connection, message.Sender.Nick, "LinkScanner is now enabled in this channel.");
+                        Commands.SendNotice(message.Connection, message.Sender.Nick, "LinkScanner is now disabled.");
+                        return;
                     }
-                    if (message.Message.IsSubCommand("disable")){
-                        if (config.Whitelist.Any(chan => chan.Network == message.Connection.NetworkConfiguration.ID && chan.Channel == message.Channel.Name)) {
-                            config.Whitelist.RemoveAll(chan => chan.Network == message.Connection.NetworkConfiguration.ID && chan.Channel == message.Channel.Name);
-                            ConfigurationAPI.SaveConfigurationFile(config, "LinkScanner");
-                            Commands.SendNotice(message.Connection, message.Sender.Nick, "LinkScanner is now disabled.");
-                            return;
-                        }
-                        Commands.SendNotice(message.Connection, message.Sender.Nick, "This channel already has linkscanner disabled.");
-                    }
+                    Commands.SendNotice(message.Connection, message.Sender.Nick,
+                                        "This channel already has linkscanner disabled.");
                 }
             }
         }
@@ -102,7 +116,6 @@ namespace SharpIRC
         }
     }
     public class LinkScannerConfig {
-        public bool EnableWhitelist { get; set; }
         public List<WhitelistChan> Whitelist = new List<WhitelistChan>();
     }
     public class WhitelistChan {

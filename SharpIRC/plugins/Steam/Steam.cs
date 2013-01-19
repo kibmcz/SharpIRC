@@ -29,7 +29,7 @@ namespace SharpIRC {
     [Extension] public class Steam : PluginInterface {
         public override void ChanMsg(ChannelMessage message) {
 
-            if (message.Message.IsCommand("steam")) {
+            if (message.Message.IsCommand("steam") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "steam")) {
                 string address = "https://steamcommunity.com/id/" + message.Message.GetMessageWithoutCommand() +
                                  "/?xml=1";
                 string wsite = new WebClient().DownloadString(address);

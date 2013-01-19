@@ -197,5 +197,11 @@ namespace SharpIRC.API {
         /// </summary>
         /// <param name="connection">The IRC connection in question.</param>
         public virtual void LoginTimedOut(IRCConnection connection) {}
+
+        /// <summary>
+        /// Triggers when client has been identified with NickServ OR received an SASL Authorization accepted.
+        /// </summary>
+        /// <param name="connection"></param>
+        public virtual void Authorized(IRCConnection connection) {}
     }
 }

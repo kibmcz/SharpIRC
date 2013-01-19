@@ -65,7 +65,7 @@ namespace SharpIRC {
         }
 
         public override void ChanMsg(ChannelMessage message) {
-            if (message.Message.IsCommand("love")) {
+            if (message.Message.IsCommand("love") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "love")) {
                 string cmessage = message.Message.GetMessageWithoutCommand();
                 if (cmessage.Split('&').Length == 2) {
                     if (Passfilter(cmessage)) {

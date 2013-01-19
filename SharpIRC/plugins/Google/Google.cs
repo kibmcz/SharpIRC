@@ -24,7 +24,7 @@ using SharpIRC.API;
 namespace SharpIRC {
     [Extension] public class Google : PluginInterface {
         public override void ChanMsg(ChannelMessage message) {
-            if (message.Message.IsCommand("google")) {
+            if (message.Message.IsCommand("google") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "google")) {
                 var cmessage = message.Message.GetMessageWithoutCommand();
                 var searchParam = cmessage;
                 var results = GoogleSearch.GetSearchResults(searchParam, 1);

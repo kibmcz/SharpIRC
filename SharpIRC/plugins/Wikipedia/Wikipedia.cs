@@ -27,13 +27,13 @@ namespace SharpIRC {
         public static bool trustedon;
 
         public override void ChanMsg(ChannelMessage message) {
-            if (message.Message.IsCommand("wiki")) {
+            if (message.Message.IsCommand("wiki") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "wiki")) {
                 try {
                     string cmessage = message.Message.GetMessageWithoutCommand();
                     string address = "http://en.wikipedia.org/wiki/" + cmessage.Replace(' ', '_');
                     var client = new WebClient();
 
-                    client.Headers.Add("user-agent", String.Format("SharpIRC IRC Bot/{0} http://nasutek.com/", Program.Version));
+                    client.Headers.Add("user-agent", String.Format("SharpIRC IRC Bot/{0} http://sharpirc.codeplex.com/", Program.Version));
                     string wsite = client.DownloadString(address);
                     string desc = "";
                     var regex = new Regex(@"<p>.*?<b>.*?</b>.*?</p>");

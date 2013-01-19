@@ -49,7 +49,7 @@ namespace SharpIRC.API
         /// <returns>Permissions</returns>
         public static PermissionIndex DeserializePermissionsFile(string path) {
             try {
-                var s = new XmlSerializer(typeof(Config));
+                var s = new XmlSerializer(typeof(PermissionIndex));
                 XmlReader r = XmlReader.Create(path, new XmlReaderSettings { CheckCharacters = false });
                 var newList = (PermissionIndex)s.Deserialize(r);
                 r.Close();
@@ -60,7 +60,6 @@ namespace SharpIRC.API
                 return null;
             }
         }
-
 
         /// <summary>
         /// Whether or not this command is registered in the permissions system.
@@ -77,7 +76,12 @@ namespace SharpIRC.API
         /// <param name="user">The user.</param>
         /// <param name="mCommand">Command name.</param>
         /// <returns>Boolean value.</returns>
-        public static bool hasCommandPermission(this IRCUser user, string mCommand) {
+        public static bool hasCommandPermission(this IRCUser user, IRCConnection connection, Channel channel, string mCommand) {
+            if (FloodControl.Timeouts.ChannelTimeouts.Any(x => x.Network == connection.Configuration.ID && x.Channel == channel.Name))
+                return false;
+            if (FloodControl.Timeouts.UserTimeouts.Any(x => x.Network == connection.Configuration.ID && x.Nick == user.Nick))
+                return false;
+            if (Program.Configuration.FloodControl) FloodControl.AddCommand(connection, channel, user);
             foreach (var permission in (from index in PermissionsList from command in index.Commands where command.Name == mCommand select command).SelectMany(command => command.Permissions)) {
                 if (permission.Type == "Admin") {
                     if (user.IsBotAdmin()) return true;

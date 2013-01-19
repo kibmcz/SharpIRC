@@ -25,7 +25,7 @@ namespace SharpIRC {
     [Extension]
     public class Uptime : PluginInterface {
         public override void ChanMsg(ChannelMessage message) {
-            if (message.Message.IsCommand("uptime")) {
+            if (message.Message.IsCommand("uptime") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "uptime")) {
                 var ts = DateTime.Now.Subtract(Connect.startTime);
                 Commands.SendPrivMsg(message.Connection, message.Channel.Name, String.Format("I've been up for {0} days, {1} hours, {2} minutes, and {3} seconds.", ts.Days, ts.Hours, ts.Minutes, ts.Seconds));
             }

@@ -43,7 +43,7 @@ namespace SharpIRC {
         /// <summary>
         /// Login timeout timer.
         /// </summary>
-        public Timer loginTimeout = new Timer(30000);
+        public Timer loginTimeout = new Timer(60000);
 
         /// <summary>
         /// The address of the IRC Server the bot is currently connected to.
@@ -115,7 +115,7 @@ namespace SharpIRC {
         /// <summary>
         /// The network configuration information related to this connection.
         /// </summary>
-        public Network NetworkConfiguration { get; set; }
+        public Network Configuration { get; set; }
 
         /// <summary>
         /// Immedantly terminate the connection to the server.

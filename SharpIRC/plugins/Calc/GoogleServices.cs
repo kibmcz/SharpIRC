@@ -31,7 +31,7 @@ namespace SharpIRC {
             client.Headers["User-Agent"] = "User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/535.7 (KHTML, like Gecko) Chrome/16.0.912.63 Safari/535.7";
             string wsite;
             string cmessage;
-            if (message.Message.IsCommand("calc")) {
+            if (message.Message.IsCommand("calc") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "calc")) {
                 cmessage = message.Message.GetMessageWithoutCommand();
                 cmessage = Regex.Replace(cmessage, "%2b", "+", RegexOptions.IgnoreCase);
                 cmessage = HttpUtility.UrlEncode(cmessage);
@@ -41,7 +41,7 @@ namespace SharpIRC {
                 Commands.SendPrivMsg(message.Connection, message.Channel, 
                     gres.Success ? String.Format("{0}Google Calc{0} {1}", (char) 2, HtmlDecode(gres.Groups[0].ToString())) : String.Format("{0}Google Calc{0} No Results were found.", (char) 2));
             }
-            if (message.Message.IsCommand("define")) {
+            if (message.Message.IsCommand("define") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "define")) {
                 cmessage = message.Message.GetMessageWithoutCommand();
                 cmessage = Regex.Replace(cmessage, "%2b", "+", RegexOptions.IgnoreCase);
                 cmessage = HttpUtility.UrlEncode(cmessage);
@@ -65,7 +65,7 @@ namespace SharpIRC {
                             : String.Format("{0}Definition:{0} {1}", (char) 2, HtmlDecode(definition.ToString())));
                 } else Commands.SendPrivMsg(message.Connection, message.Channel, String.Format("{0}Google Dictionairy{0} Unable to find any results for your query.", (char) 2));
             }
-            if (message.Message.IsCommand("market")) {
+            if (message.Message.IsCommand("market") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "market")) {
                 cmessage = message.Message.GetMessageWithoutCommand();
                 cmessage = Regex.Replace(cmessage, "%2b", "+", RegexOptions.IgnoreCase);
                 cmessage = HttpUtility.UrlEncode(cmessage);
@@ -79,28 +79,30 @@ namespace SharpIRC {
                         ? String.Format("{0}Google Finance{0} {1} {2} - {3} ({4}, {5})", (char) 2, nameRegex.Groups[1], nameRegex.Groups[2], valueRegex.Groups[2], priceRangeRegex.Groups[4], percentageRegex.Groups[4])
                         : String.Format("{0}Google Finance{0} No results found.", ((char) 2)));
             }
-            if (!message.Message.IsCommand("weather")) return;
-            cmessage = message.Message.GetMessageWithoutCommand();
-            cmessage = Regex.Replace(cmessage, "%2b", "+", RegexOptions.IgnoreCase);
-            cmessage = HttpUtility.UrlEncode(cmessage);
-            address = String.Format("http://www.google.com/search?hl=en&q=weather:{0}", cmessage);
-            client.Encoding = System.Text.Encoding.UTF8;
-            wsite = client.DownloadString(address);
-            wsite = HttpUtility.HtmlDecode(wsite);
-            Match locationRegex = Regex.Match(wsite, "<h3 class=r><b>Weather</b> for <b>(.*)</b></h3></div>");
-            Match temperatureRegex = Regex.Match(wsite, 
-                "<td style=\"font-size:140%;white-space:nowrap;vertical-align:top;padding-right:15px;font-weight:bold\" rowspan=2>(.*)Â°C<td style=\"width:5px;border-left:solid 1px #d8d8d8\" rowspan=5>");
-            Match typeRegex = Regex.Match(wsite, "<td style=\"white-space:nowrap;padding-right:15px;color:#666\">(.*)<td><td><td><tr><td style=\"white-space:nowrap;padding-right:15px;color:#666\">Wind");
-            Match humidityRegex = Regex.Match(wsite, "#666\">Humidity: (.*)%<td");
-            Match windRegex = Regex.Match(wsite, "<td><td><td><tr><td (.*)>Wind: (.*)<td><td><td><tr>");
-            Commands.SendPrivMsg(message.Connection, message.Channel, locationRegex.Success ? String.Format("{0}Google Weather{0} for {1}: {2}. Temperature: {3}°C. Wind: {4}. Humidity: {5}",
-                        (char) 2,
-                        locationRegex.Groups[1],
-                        typeRegex.Groups[1],
-                        temperatureRegex.Groups[1],
-                        windRegex.Groups[2],
-                        humidityRegex.Groups[1] + "%")
-                    : String.Format("{0}Google Weather{0} Your location was not found.", (char) 2));
+            if (message.Message.IsCommand("weather") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "weather")) {
+                cmessage = message.Message.GetMessageWithoutCommand();
+                cmessage = Regex.Replace(cmessage, "%2b", "+", RegexOptions.IgnoreCase);
+                cmessage = HttpUtility.UrlEncode(cmessage);
+                address = String.Format("http://www.google.com/search?hl=en&q=weather:{0}", cmessage);
+                client.Encoding = System.Text.Encoding.UTF8;
+                wsite = client.DownloadString(address);
+                wsite = HttpUtility.HtmlDecode(wsite);
+                Match locationRegex = Regex.Match(wsite, "<h3 class=r><b>Weather</b> for <b>(.*)</b></h3></div>");
+                Match temperatureRegex = Regex.Match(wsite,
+                    "<td style=\"font-size:140%;white-space:nowrap;vertical-align:top;padding-right:15px;font-weight:bold\" rowspan=2>(.*)Â°C<td style=\"width:5px;border-left:solid 1px #d8d8d8\" rowspan=5>");
+                Match typeRegex = Regex.Match(wsite, "<td style=\"white-space:nowrap;padding-right:15px;color:#666\">(.*)<td><td><td><tr><td style=\"white-space:nowrap;padding-right:15px;color:#666\">Wind");
+                Match humidityRegex = Regex.Match(wsite, "#666\">Humidity: (.*)%<td");
+                Match windRegex = Regex.Match(wsite, "<td><td><td><tr><td (.*)>Wind: (.*)<td><td><td><tr>");
+                Commands.SendPrivMsg(message.Connection, message.Channel, locationRegex.Success ? String.Format("{0}Google Weather{0} for {1}: {2}. Temperature: {3}°C. Wind: {4}. Humidity: {5}",
+                            (char)2,
+                            locationRegex.Groups[1],
+                            typeRegex.Groups[1],
+                            temperatureRegex.Groups[1],
+                            windRegex.Groups[2],
+                            humidityRegex.Groups[1] + "%")
+                        : String.Format("{0}Google Weather{0} Your location was not found.", (char)2));
+            }
+            
         }
 
         public string HtmlDecode(string htmlstring) {

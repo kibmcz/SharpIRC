@@ -29,7 +29,7 @@ using SharpIRC.API;
 namespace SharpIRC {
     [Extension] public class YouTube : PluginInterface {
         public override void ChanMsg(ChannelMessage message) {
-            if (message.Message.IsCommand("youtube")) {
+            if (message.Message.IsCommand("youtube") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "youtube")) {
                 Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
                 string searchString = message.Message.GetMessageWithoutCommand();
                 searchString = Regex.Replace(searchString, "%2b", "+", RegexOptions.IgnoreCase);

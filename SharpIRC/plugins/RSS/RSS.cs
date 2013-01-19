@@ -90,61 +90,62 @@ namespace SharpIRC {
         }
 
         public override void ChanMsg(ChannelMessage message) {
-            if (!message.Message.IsCommand("rss") || !message.Sender.IsBotAdmin()) return;
-            string qmsg = message.Message.GetMessageWithoutCommand();
-            if (message.Message.IsSubCommand("add")) {
-                if (qmsg.Split(' ').Length >= 4) {
-                    var newrss = new RSSFeed {
-                        URL = qmsg.Split(' ')[1],
-                        UpdateRate = (Convert.ToInt32(qmsg.Split(' ')[2])*1000),
-                        NetworkName = message.Connection.ActiveNetwork,
-                        Limit = Convert.ToInt32(qmsg.Split(' ')[4]),
-                        ID = message.Connection.NetworkConfiguration.ID
-                    };
+            if (message.Message.IsCommand("rss") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "rss")) {
+                string qmsg = message.Message.GetMessageWithoutCommand();
+                if (message.Message.IsSubCommand("add")) {
+                    if (qmsg.Split(' ').Length >= 4) {
+                        var newrss = new RSSFeed {
+                            URL = qmsg.Split(' ')[1],
+                            UpdateRate = (Convert.ToInt32(qmsg.Split(' ')[2]) * 1000),
+                            NetworkName = message.Connection.ActiveNetwork,
+                            Limit = Convert.ToInt32(qmsg.Split(' ')[4]),
+                            ID = message.Connection.Configuration.ID
+                        };
 
-                    string xchans = qmsg.Split(' ')[3];
-                    string[] tchans = xchans.Split(',');
-                    foreach (string chan in tchans) newrss.Channels.Add(chan);
-                    if (qmsg.Split(' ').Length > 5) {
-                        string rssmsg = Connect.JoinString(qmsg.Split(' '), 5, false);
-                        newrss.Layout = rssmsg;
-                    } else newrss.Layout = "RSS ~ %title% %link% @ %pubDate% ~";
-                    MyRSS.RSS.Add(newrss);
-                    ConfigurationAPI.SaveConfigurationFile(MyRSS, "RSS");
-                    StopRSSTimers();
-                    StartRSSTimers(message.Connection);
-                    Commands.SendPrivMsg(message.Connection, message.Channel, "The RSS feed has been sucessfully added!");
+                        string xchans = qmsg.Split(' ')[3];
+                        string[] tchans = xchans.Split(',');
+                        foreach (string chan in tchans) newrss.Channels.Add(chan);
+                        if (qmsg.Split(' ').Length > 5) {
+                            string rssmsg = Connect.JoinString(qmsg.Split(' '), 5, false);
+                            newrss.Layout = rssmsg;
+                        } else newrss.Layout = "RSS ~ %title% %link% @ %pubDate% ~";
+                        MyRSS.RSS.Add(newrss);
+                        ConfigurationAPI.SaveConfigurationFile(MyRSS, "RSS");
+                        StopRSSTimers();
+                        StartRSSTimers(message.Connection);
+                        Commands.SendPrivMsg(message.Connection, message.Channel, "The RSS feed has been sucessfully added!");
+                    }
                 }
-            }
-            if (message.Message.IsSubCommand("del")) {
-                int number = Convert.ToInt32(qmsg.Split(' ')[1]);
-                if (MyRSS.RSS.Count >= number) {
-                    int theint = 0;
-                    foreach (RSSFeed feed in MyRSS.RSS) {
-                        theint++;
-                        if (theint == number) {
-                            MyRSS.RSS.Remove(feed);
-                            ConfigurationAPI.SaveConfigurationFile(MyRSS, "RSS");
-                            StopRSSTimers();
-                            StartRSSTimers(message.Connection);
-                            Commands.SendPrivMsg(message.Connection, message.Channel, "Feed number " + number + " has been deleted.");
-                            break;
+                if (message.Message.IsSubCommand("del")) {
+                    int number = Convert.ToInt32(qmsg.Split(' ')[1]);
+                    if (MyRSS.RSS.Count >= number) {
+                        int theint = 0;
+                        foreach (RSSFeed feed in MyRSS.RSS) {
+                            theint++;
+                            if (theint == number) {
+                                MyRSS.RSS.Remove(feed);
+                                ConfigurationAPI.SaveConfigurationFile(MyRSS, "RSS");
+                                StopRSSTimers();
+                                StartRSSTimers(message.Connection);
+                                Commands.SendPrivMsg(message.Connection, message.Channel, "Feed number " + number + " has been deleted.");
+                                break;
+                            }
                         }
                     }
                 }
-            }
-            if (message.Message.IsSubCommand("list")) {
-                Commands.SendNotice(message.Connection, message.Sender.Nick, "Displaying All RSS Feeds in my database.");
-                int rfeed = 0;
-                foreach (RSSFeed rssfeed in MyRSS.RSS) {
-                    string limit = rssfeed.Limit.ToString();
-                    if (limit == "0") limit = "Infinite";
-                    rfeed++;
-                    Commands.SendNotice(message.Connection, message.Sender.Nick,
-                        String.Format("{0}{1}{0} URL: {2}. Update Rate: {3}.. Displayed in channels: {4}. Layout: {5} Limit: {6}", 
-                        (char) 2, rfeed, rssfeed.URL, (rssfeed.UpdateRate/1000), RSSChannelList(rfeed), HttpUtility.UrlDecode(rssfeed.Layout), rssfeed.Limit));
+                if (message.Message.IsSubCommand("list")) {
+                    Commands.SendNotice(message.Connection, message.Sender.Nick, "Displaying All RSS Feeds in my database.");
+                    int rfeed = 0;
+                    foreach (RSSFeed rssfeed in MyRSS.RSS) {
+                        string limit = rssfeed.Limit.ToString();
+                        if (limit == "0") limit = "Infinite";
+                        rfeed++;
+                        Commands.SendNotice(message.Connection, message.Sender.Nick,
+                            String.Format("{0}{1}{0} URL: {2}. Update Rate: {3}.. Displayed in channels: {4}. Layout: {5} Limit: {6}",
+                            (char)2, rfeed, rssfeed.URL, (rssfeed.UpdateRate / 1000), RSSChannelList(rfeed), HttpUtility.UrlDecode(rssfeed.Layout), rssfeed.Limit));
+                    }
+                    Commands.SendNotice(message.Connection, message.Sender.Nick, "RSS Feed List displayed.");
                 }
-                Commands.SendNotice(message.Connection, message.Sender.Nick, "RSS Feed List displayed.");
             }
         }
 

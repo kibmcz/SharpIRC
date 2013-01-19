@@ -87,6 +87,7 @@
     <Compile Include="API\SpecialExtensions.cs" />
     <Compile Include="API\Commands.cs" />
     <Compile Include="connect.cs" />
+    <Compile Include="FloodControl.cs" />
     <Compile Include="IRC.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>

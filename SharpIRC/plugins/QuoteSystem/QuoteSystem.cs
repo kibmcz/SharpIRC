@@ -31,7 +31,7 @@ namespace SharpIRC {
         public override void ConfigurationChange(ConfigurationFile file) { if (file.Name == "Quotes") myquotes = ConfigurationAPI.LoadConfigurationFile<QuoteDatabase>("Quotes"); }
 
         public override void ChanMsg(ChannelMessage message) {
-            if (message.Message.IsCommand("addquote")) {
+            if (message.Message.IsCommand("addquote") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "addquote")) {
                 string qmessage = message.Message.GetMessageWithoutCommand();
                 var newquote = new Quote {
                     Author = message.Sender.Nick,
@@ -43,7 +43,7 @@ namespace SharpIRC {
                 Commands.SendPrivMsg(message.Connection, message.Channel, "Your quote has been saved as quote number: " + myquotes.Quotes.Count);
                 ConfigurationAPI.SaveConfigurationFile(myquotes, "Quotes");
             }
-            if (message.Message.IsCommand("quote")) {
+            if (message.Message.IsCommand("quote") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "quote")) {
                 string qmessage = message.Message.GetMessageWithoutCommand();
                 if (IsInteger(qmessage)) {
                     if (myquotes.Quotes.Count >= Convert.ToInt32(qmessage)) {
@@ -55,7 +55,7 @@ namespace SharpIRC {
                     } else Commands.SendPrivMsg(message.Connection, message.Channel, "Quote " + qmessage + " does not exsist. The last quote is " + myquotes.Quotes.Count + ".");
                 } else Commands.SendPrivMsg(message.Connection, message.Channel, "The quote you entered is not a number. Syntax: ~quote <number>.");
             }
-            if (message.Message.IsCommand("fquote")) {
+            if (message.Message.IsCommand("fquote") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "fquote")) {
                 if (IsInteger(message.Message.Split(' ')[1])) {
                     if (message.Message.Split(' ').Length >= 2) {
                         var wcard = new Connect.Wildcard(String.Format("*{0}*", message.Message.GetMessageWithoutSubCommand()), RegexOptions.IgnoreCase);
@@ -106,22 +106,28 @@ namespace SharpIRC {
                     }
                 }
             }
-            if (message.Message.IsCommand("delquote")) {
-                if (message.Sender.IsBotAdmin()) {
-                    string qmessage = message.Message.GetMessageWithoutCommand();
-                    if (IsInteger(qmessage)) {
-                        if (myquotes.Quotes.Count >= Convert.ToInt32(qmessage)) {
-                            int quotenumber = 0;
-                            List<Quote> templist = myquotes.Quotes.ToList();
-                            foreach (Quote quote in templist) {
-                                quotenumber++;
-                                if (quotenumber == Convert.ToInt32(qmessage)) myquotes.Quotes.Remove(quote);
-                            }
-                            ConfigurationAPI.SaveConfigurationFile(myquotes, "Quotes");
-                            Commands.SendPrivMsg(message.Connection, message.Channel, "Quote " + qmessage + "has been removed.");
-                        } else Commands.SendPrivMsg(message.Connection, message.Channel, "Quote " + qmessage + "does not exsist. The last quote is: " + myquotes.Quotes.Count);
-                    } else Commands.SendPrivMsg(message.Connection, message.Channel, "That is not a number.. Syntax: ~delquote <quote number>");
+            if (message.Message.IsCommand("delquote") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "delquote")) {
+                string qmessage = message.Message.GetMessageWithoutCommand();
+                if (IsInteger(qmessage)) {
+                    if (myquotes.Quotes.Count >= Convert.ToInt32(qmessage)) {
+                        int quotenumber = 0;
+                        List<Quote> templist = myquotes.Quotes.ToList();
+                        foreach (Quote quote in templist) {
+                            quotenumber++;
+                            if (quotenumber == Convert.ToInt32(qmessage)) myquotes.Quotes.Remove(quote);
+                        }
+                        ConfigurationAPI.SaveConfigurationFile(myquotes, "Quotes");
+                        Commands.SendPrivMsg(message.Connection, message.Channel,
+                                             "Quote " + qmessage + "has been removed.");
+                    }
+                    else
+                        Commands.SendPrivMsg(message.Connection, message.Channel,
+                                             "Quote " + qmessage + "does not exsist. The last quote is: " +
+                                             myquotes.Quotes.Count);
                 }
+                else
+                    Commands.SendPrivMsg(message.Connection, message.Channel,
+                                         "That is not a number.. Syntax: ~delquote <quote number>");
             }
         }
 

@@ -25,10 +25,10 @@ namespace SharpIRC {
         public List<ClonedUser> Clones = new List<ClonedUser>();
 
         public override void ChanMsg(ChannelMessage message) {
-            foreach (ClonedUser user in Clones.Where(user => user.ID == message.Connection.NetworkConfiguration.ID && user.channel == message.Channel.Name && user.nick == message.Sender.Nick)) {
+            foreach (ClonedUser user in Clones.Where(user => user.ID == message.Connection.Configuration.ID && user.channel == message.Channel.Name && user.nick == message.Sender.Nick)) {
                 Commands.SendPrivMsg(message.Connection, message.Channel, message.Message);
             }
-            if (!message.Message.IsCommand("clone") || message.Message.GetMessageWithoutCommand().Length <= 0 || !message.Sender.IsBotAdmin()) return;
+            if (!message.Message.IsCommand("clone") || message.Message.GetMessageWithoutCommand().Length <= 0 || !message.Sender.hasCommandPermission(message.Connection, message.Channel, "clone")) return;
             string cmessage = message.Message.GetMessageWithoutCommand();
             bool exists = false;
             if (message.Message.IsSubCommand("add")) {
@@ -36,7 +36,7 @@ namespace SharpIRC {
                 if (!exists) {
                     var newclone = new ClonedUser {
                         nick = cmessage.Split(' ')[1],
-                        ID = message.Connection.NetworkConfiguration.ID,
+                        ID = message.Connection.Configuration.ID,
                         channel = message.Channel.Name
                     };
                     Clones.Add(newclone);
@@ -58,7 +58,7 @@ namespace SharpIRC {
         }
 
         public override void ChanAction(ChannelMessage message) {
-            foreach (ClonedUser user in Clones.Where(user => user.ID == message.Connection.NetworkConfiguration.ID && user.channel == message.Channel.Name && user.nick == message.Sender.Nick)) {
+            foreach (ClonedUser user in Clones.Where(user => user.ID == message.Connection.Configuration.ID && user.channel == message.Channel.Name && user.nick == message.Sender.Nick)) {
                 Commands.SendAction(message.Connection, message.Channel, message.Message);
             }
         }

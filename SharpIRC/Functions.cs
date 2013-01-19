@@ -75,7 +75,7 @@ namespace SharpIRC {
             if (Program.Configuration.LogComments) {
                 string makePath = Path.Combine(Program.StartupPath, "Logs");
                 if (!Directory.Exists(makePath)) Directory.CreateDirectory(makePath);
-                makePath = Path.Combine(makePath, DateTime.Now.ToString("dd-MM-yyyy") + ".txt");
+                makePath = Path.Combine(makePath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
                 fs = File.Open(makePath, FileMode.Append, FileAccess.Write);
                 sw = new StreamWriter(fs, Encoding.UTF8);
                 sw.WriteLine("[" + DateTime.Now.ToString("M HH:mm:ss") + "] ERROR: " + error);
@@ -111,9 +111,9 @@ namespace SharpIRC {
         public static void LogHistory(string Network, String Name, string Text) {
             if (Program.Configuration.ChatHistory) {
                 try {
-                    string mPath = String.Format("{0}{1}Chat History{1}{2}{1}{3}", Program.StartupPath, Path.DirectorySeparatorChar, Network, Name);
+                    string mPath = String.Format("{0}{1}History{1}{2}{1}{3}", Program.StartupPath, Path.DirectorySeparatorChar, Network, Name);
                     if (!Directory.Exists(mPath)) Directory.CreateDirectory(mPath);
-                    FileStream fs = File.Open(Path.Combine(mPath, DateTime.Now.ToString("dd-MM-yyyy") + ".txt"), FileMode.Append, FileAccess.Write);
+                    FileStream fs = File.Open(Path.Combine(mPath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt"), FileMode.Append, FileAccess.Write);
                     var sw = new StreamWriter(fs, Encoding.UTF8);
                     sw.WriteLine("[" + DateTime.Now.ToString("M HH:mm:ss") + "] " + Text);
                     sw.Close();
@@ -146,6 +146,18 @@ namespace SharpIRC {
         public static void UpdateNickChange(IRCConnection connection, string oldnick, string newnick) {
             foreach (var user in from chan in connection.Channels from user in chan.Nicks where user.Nick == oldnick select user) {
                 user.Nick = newnick;
+            }
+        }
+
+        public static string Base64Encode(string data) {
+            try {
+                var encData_byte = new byte[data.Length];
+                encData_byte = System.Text.Encoding.UTF8.GetBytes(data);
+                var encodedData = Convert.ToBase64String(encData_byte);
+                return encodedData;
+            }
+            catch (Exception e) {
+                return null;
             }
         }
     }

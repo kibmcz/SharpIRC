@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<PermissionIndex xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
-  <Commands>
-    <Command Name="8ball">
-      <Permissions Type="Normal" />
-    </Command>
-  </Commands>
-</PermissionIndex>

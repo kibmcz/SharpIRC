@@ -30,7 +30,7 @@ namespace SharpIRC {
         }
 
         public override void ChanMsg(ChannelMessage message) {
-            var thisnet = (from net in Triggerlist.Nets where net.ID == message.Connection.NetworkConfiguration.ID.ToString() select net).FirstOrDefault();
+            var thisnet = (from net in Triggerlist.Nets where net.ID == message.Connection.Configuration.ID.ToString() select net).FirstOrDefault();
             if (thisnet != null) {
                 foreach (Trigger trig in thisnet.Triggers.Where(trig => trig.Command.IsCommand(message.Message) && trig.Channel == message.Channel.Name)) {
                     if (trig.Action == "message") Commands.SendPrivMsg(message.Connection, message.Channel, trig.Message);
@@ -40,9 +40,9 @@ namespace SharpIRC {
             if (!message.Message.IsCommand("trigger")) return;
             TriggerNet oldnet;
             if (message.Message.IsSubCommand("add") && message.Sender.IsOperator()) {
-                oldnet = (from net in Triggerlist.Nets where net.ID == message.Connection.NetworkConfiguration.ID.ToString() select net).FirstOrDefault();
+                oldnet = (from net in Triggerlist.Nets where net.ID == message.Connection.Configuration.ID.ToString() select net).FirstOrDefault();
                 if (oldnet == null) {
-                    var newnet = new TriggerNet {ID = message.Connection.NetworkConfiguration.ID.ToString()};
+                    var newnet = new TriggerNet {ID = message.Connection.Configuration.ID.ToString()};
                     oldnet = newnet;
                 }
                 var newdata = new Trigger {
@@ -52,7 +52,7 @@ namespace SharpIRC {
                     Channel = message.Channel.Name
                 };
                 oldnet.Triggers.RemoveAll(x => x.Command == message.Message.Split(' ')[3]);
-                Triggerlist.Nets.RemoveAll(x => x.ID == message.Connection.NetworkConfiguration.ID.ToString());
+                Triggerlist.Nets.RemoveAll(x => x.ID == message.Connection.Configuration.ID.ToString());
                 oldnet.Triggers.Add(newdata);
                 Triggerlist.Nets.Add(oldnet);
                 ConfigurationAPI.SaveConfigurationFile(Triggerlist, "Triggers");
@@ -60,12 +60,12 @@ namespace SharpIRC {
                     message.Message.Split(' ')[3], message.Message.Split(' ')[2], Connect.JoinString(message.Message.Split(' '), 4, false), message.Channel));
             }
             if (message.Message.IsSubCommand("del") && message.Sender.IsOperator()) {
-                oldnet = (from net in Triggerlist.Nets where net.ID == message.Connection.NetworkConfiguration.ID.ToString() select net).FirstOrDefault();
+                oldnet = (from net in Triggerlist.Nets where net.ID == message.Connection.Configuration.ID.ToString() select net).FirstOrDefault();
                 if (oldnet != null) {
                     bool exists = oldnet.Triggers.Exists(x => x.Command == message.Message.Split(' ')[2]);
                     if (exists) {
                         oldnet.Triggers.RemoveAll(x => x.Command == message.Message.Split(' ')[2]);
-                        Triggerlist.Nets.RemoveAll(x => x.ID == message.Connection.NetworkConfiguration.ID.ToString());
+                        Triggerlist.Nets.RemoveAll(x => x.ID == message.Connection.Configuration.ID.ToString());
                         Triggerlist.Nets.Add(oldnet);
                         ConfigurationAPI.SaveConfigurationFile(Triggerlist, "Triggers");
                         Commands.SendPrivMsg(message.Connection, message.Channel, String.Format("The command {0} has been deleted from {1}", message.Message.Split(' ')[2], message.Channel));
@@ -74,7 +74,7 @@ namespace SharpIRC {
             }
             if (!message.Message.IsSubCommand("list")) return;
             Commands.SendNotice(message.Connection, message.Sender.Nick, String.Format("Displaying all custom commands for {0}", message.Channel));
-            oldnet = (from net in Triggerlist.Nets where net.ID == message.Connection.NetworkConfiguration.ID.ToString() select net).FirstOrDefault();
+            oldnet = (from net in Triggerlist.Nets where net.ID == message.Connection.Configuration.ID.ToString() select net).FirstOrDefault();
             if (oldnet != null) foreach (Trigger trig in oldnet.Triggers) Commands.SendNotice(message.Connection, message.Sender.Nick, 
                 String.Format("Command: {0}, Type: {1}, Message: {2}", trig.Command, trig.Action, trig.Message));
             Commands.SendNotice(message.Connection, message.Sender.Nick, String.Format("Completed custom command listing for {0}", message.Channel));

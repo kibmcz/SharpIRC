@@ -17,6 +17,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace SharpIRC.API {
     internal class Events {
@@ -109,6 +110,9 @@ namespace SharpIRC.API {
                 } catch (Exception e) {
                     Functions.LogError(e);
                 }
+            }
+            if (new Regex("You are now identified for (.*)", RegexOptions.IgnoreCase).Match(message).Success || message == "Password accepted - you are now recognized.") {
+                new Events().Authorized(connection);
             }
         }
 
@@ -376,6 +380,16 @@ namespace SharpIRC.API {
             foreach (PluginInterface plugin in Program.Plugins) {
                 try {
                     plugin.LoginTimedOut(connection);
+                }
+                catch (Exception e) {
+                    Functions.LogError(e);
+                }
+            }
+        }
+        internal void Authorized(IRCConnection connection) {
+            foreach (PluginInterface plugin in Program.Plugins) {
+                try {
+                    plugin.Authorized(connection);
                 }
                 catch (Exception e) {
                     Functions.LogError(e);
