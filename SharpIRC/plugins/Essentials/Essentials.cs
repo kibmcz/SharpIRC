@@ -85,10 +85,32 @@ namespace SharpIRC {
             }
         }
 
+        public override void PrivMsg(PrivateMessage message) {
+            if (message.Message.IsPMCommand("login")) {
+                try {
+                    if (message.Sender.IsBotAdmin()) {
+                        Commands.SendPrivMsg(message.Connection, message.Sender.Nick, "You are already signed in as an administrator.");
+                        return;
+                    }
+                    var username = message.Message.Split(' ')[1];
+                    var password = message.Message.Split(' ')[2];
+                    foreach (Admin admin in Program.Configuration.Admins.Where(admin => username == admin.Username && password == admin.Password)) {
+                        Commands.SendPrivMsg(message.Connection, message.Sender.Nick, "You have authenticated as \"" + admin.Username + "\" and are now signed in as an administrator. . Your session will end in 60 minutes or when you quit.");
+                        if (!Program.Configuration.DisableSessionTimer) SessionTimer(message.Connection, message.Sender.Nick);
+                        Program.Sessions.Add(new LoggedInAdmin() {Nick = message.Sender.Nick, User = admin});
+                        return;
+                    }
+                    Commands.SendPrivMsg(message.Connection,message.Sender.Nick,"Login failed: Incorrect username or password.");
+                }
+                catch {
+                    
+                }
+            }
+        }
         public override void CTCP(CTCPMessage message)
         {
             switch (message.Prefix) {
-                case "VERSION": Commands.SendCTCPReply(message.Connection, message.Sender.Nick, String.Format("VERSION SharpIRC IRC Bot {0} http://sharpirc.codeplex.com/", Program.Version));
+                case "VERSION": Commands.SendCTCPReply(message.Connection, message.Sender.Nick, String.Format("VERSION SharpIRC IRC Bot {0} http://nasutek.com/", Program.Version));
                     break;
                 case "TIME": Commands.SendCTCPReply(message.Connection, message.Sender.Nick, String.Format("TIME {0}", DateTime.Now));
                     break;

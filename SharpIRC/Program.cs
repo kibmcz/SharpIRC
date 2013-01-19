@@ -123,12 +123,13 @@ namespace SharpIRC {
                 LoadPlugins();
                 Permissions.PermissionsList = Permissions.LoadPermissionsData();
 
-                foreach (var net in Configuration.Networks.Where(net => net.ID == Guid.Empty)) {
+                /*foreach (var net in Configuration.Networks.Where(net => net.ID == Guid.Empty)) {
                     net.ID = Guid.NewGuid();
                     SerializeDataFile(Configuration);
-                }
+                }*/
                 foreach (var netw in Configuration.Networks.Where(x => x.Enabled)) {
                     var con = new IRCConnection {Configuration = netw};
+                    Connections.Add(con);
                     new Thread(() => Connect.ConnnectToNetwork(con)).Start();
                 }
             }

@@ -43,7 +43,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Essentials", "SharpIRC\plug
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Help", "SharpIRC\plugins\Help\Help.csproj", "{0C7FB50A-01E0-4DC3-B79B-3A53895F5D1E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Uptime", "SharpIRC\plugins\Uptime\Uptime.csproj", "{460073A2-6D41-42CF-9971-9A4F5A88ED67}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sysinfo", "SharpIRC\plugins\Uptime\Sysinfo.csproj", "{460073A2-6D41-42CF-9971-9A4F5A88ED67}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -161,9 +161,9 @@ Global
 		{460073A2-6D41-42CF-9971-9A4F5A88ED67} = {0ABD085B-03F5-4718-BEE6-BCF42C150BFF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_UpdateFileVersion = True
-		BuildVersion_UpdateAssemblyVersion = True
 		BuildVersion_BuildVersioningStyle = None.None.None.DeltaBaseDate
+		BuildVersion_UpdateAssemblyVersion = True
+		BuildVersion_UpdateFileVersion = True
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Manager = AnkhSVN - Subversion Support for Visual Studio

@@ -97,7 +97,6 @@ namespace SharpIRC {
                         var newrss = new RSSFeed {
                             URL = qmsg.Split(' ')[1],
                             UpdateRate = (Convert.ToInt32(qmsg.Split(' ')[2]) * 1000),
-                            NetworkName = message.Connection.ActiveNetwork,
                             Limit = Convert.ToInt32(qmsg.Split(' ')[4]),
                             ID = message.Connection.Configuration.ID
                         };
@@ -193,7 +192,6 @@ namespace SharpIRC {
         public int UpdateRate { get; set; }
         public string Layout { get; set; }
         [XmlAttribute("ID")] public Guid ID { get; set; }
-        public string NetworkName { get; set; }
         public int Limit { get; set; }
     }
 
