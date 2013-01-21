@@ -164,7 +164,6 @@ namespace SharpIRC {
                                             case "CHANMODES":
                                                 connection.SupportedChannelModes = word.Split('=')[1];
                                                 break;
-                                            case "CHANLIMIT":
 
                                         }
                                     }
