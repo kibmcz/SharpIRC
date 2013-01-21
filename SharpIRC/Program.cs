@@ -130,7 +130,7 @@ namespace SharpIRC {
                 foreach (var netw in Configuration.Networks.Where(x => x.Enabled)) {
                     var con = new IRCConnection {Configuration = netw};
                     Connections.Add(con);
-                    new Thread(() => Connect.ConnnectToNetwork(con)).Start();
+                    new Thread(() => Parser.ConnnectToNetwork(con)).Start();
                 }
             }
             catch(Exception ex) {

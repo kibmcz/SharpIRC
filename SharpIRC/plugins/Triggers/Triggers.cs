@@ -48,7 +48,7 @@ namespace SharpIRC {
                 var newdata = new Trigger {
                     Action = message.Message.Split(' ')[2],
                     Command = message.Message.Split(' ')[3],
-                    Message = Connect.JoinString(message.Message.Split(' '), 4, false),
+                    Message = Parser.JoinString(message.Message.Split(' '), 4, false),
                     Channel = message.Channel.Name
                 };
                 oldnet.Triggers.RemoveAll(x => x.Command == message.Message.Split(' ')[3]);
@@ -57,7 +57,7 @@ namespace SharpIRC {
                 Triggerlist.Nets.Add(oldnet);
                 ConfigurationAPI.SaveConfigurationFile(Triggerlist, "Triggers");
                 Commands.SendPrivMsg(message.Connection, message.Channel, String.Format("The command ~{0} with the {1} response \"{2}\" has been added for {3}",
-                    message.Message.Split(' ')[3], message.Message.Split(' ')[2], Connect.JoinString(message.Message.Split(' '), 4, false), message.Channel));
+                    message.Message.Split(' ')[3], message.Message.Split(' ')[2], Parser.JoinString(message.Message.Split(' '), 4, false), message.Channel));
             }
             if (message.Message.IsSubCommand("del") && message.Sender.IsOperator()) {
                 oldnet = (from net in Triggerlist.Nets where net.ID == message.Connection.Configuration.ID.ToString() select net).FirstOrDefault();

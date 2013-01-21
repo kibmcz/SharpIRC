@@ -20,7 +20,6 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using SharpIRC.API;
 
 namespace SharpIRC {
@@ -128,7 +127,7 @@ namespace SharpIRC {
             string nickname = sms[3];
             string hostname = sms[1];
             string chanmode = sms[4].Substring(sms[4].Length - 1, 1);
-            string realname = Connect.JoinString(sms, 6, false);
+            string realname = Parser.JoinString(sms, 6, false);
             connection.GetChannelByName(channel).Nicks.RemoveAll(x => x.Nick == nickname);
             connection.GetChannelByName(channel).Nicks.Add(new IRCUser {
                                                                              Host = hostname,

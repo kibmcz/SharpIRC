@@ -58,7 +58,7 @@ namespace SharpIRC {
             if (message.Message.IsCommand("fquote") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "fquote")) {
                 if (IsInteger(message.Message.Split(' ')[1])) {
                     if (message.Message.Split(' ').Length >= 2) {
-                        var wcard = new Connect.Wildcard(String.Format("*{0}*", message.Message.GetMessageWithoutSubCommand()), RegexOptions.IgnoreCase);
+                        var wcard = new Parser.Wildcard(String.Format("*{0}*", message.Message.GetMessageWithoutSubCommand()), RegexOptions.IgnoreCase);
                         int qnum = Convert.ToInt32(message.Message.Split(' ')[1]);
                         List<Quote> qlist = myquotes.Quotes.Where(x => wcard.IsMatch(x.Message)).ToList();
                         if (qnum <= qlist.Count) {
@@ -70,7 +70,7 @@ namespace SharpIRC {
                     }
                 } else {
                     if (message.Message.IsSubCommand("last")) {
-                        var wcard = new Connect.Wildcard(String.Format("*{0}*", message.Message.GetMessageWithoutSubCommand()), RegexOptions.IgnoreCase);
+                        var wcard = new Parser.Wildcard(String.Format("*{0}*", message.Message.GetMessageWithoutSubCommand()), RegexOptions.IgnoreCase);
                         List<Quote> qlist = myquotes.Quotes.Where(x => wcard.IsMatch(x.Message)).ToList();
                         int qnum = qlist.Count;
                         if (qlist.Count > 0) {
@@ -81,7 +81,7 @@ namespace SharpIRC {
                         } else Commands.SendPrivMsg(message.Connection, message.Channel, "No quotes matching your query was found.");
                     }
                     if (message.Message.IsSubCommand("next")) {
-                        var wcard = new Connect.Wildcard(String.Format("*{0}*", message.Message.GetMessageWithoutSubCommand()), RegexOptions.IgnoreCase);
+                        var wcard = new Parser.Wildcard(String.Format("*{0}*", message.Message.GetMessageWithoutSubCommand()), RegexOptions.IgnoreCase);
                         List<Quote> qlist = myquotes.Quotes.Where(x => wcard.IsMatch(x.Message)).ToList();
                         int qnum = GetCurrentHistory(message.Message.GetMessageWithoutSubCommand()) + 1;
                         if (qnum <= qlist.Count) {
@@ -92,7 +92,7 @@ namespace SharpIRC {
                         } else Commands.SendPrivMsg(message.Connection, message.Channel, "No quotes matching your query was found.");
                     }
                     if (message.Message.IsSubCommand("previous")) {
-                        var wcard = new Connect.Wildcard(String.Format("*{0}*", message.Message.GetMessageWithoutSubCommand()), RegexOptions.IgnoreCase);
+                        var wcard = new Parser.Wildcard(String.Format("*{0}*", message.Message.GetMessageWithoutSubCommand()), RegexOptions.IgnoreCase);
 
                         List<Quote> qlist = myquotes.Quotes.Where(x => wcard.IsMatch(x.Message)).ToList();
                         int qnum = GetCurrentHistory(message.Message.GetMessageWithoutSubCommand()) - 1;
@@ -152,7 +152,7 @@ namespace SharpIRC {
         }
 
         public static int Getmatches(string searchterm) {
-            var wcard = new Connect.Wildcard("*" + searchterm + "*", RegexOptions.IgnoreCase);
+            var wcard = new Parser.Wildcard("*" + searchterm + "*", RegexOptions.IgnoreCase);
             return myquotes.Quotes.Count(quote => wcard.IsMatch(quote.Message));
         }
 

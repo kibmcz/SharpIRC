@@ -85,7 +85,7 @@ namespace SharpIRC {
         public static bool MatchesCache(string matche) {
             bool returnal = false;
             matche = HttpUtility.UrlEncode(matche);
-            foreach (string matcher in Rsscache.RSSCache.Where(matcher => matcher == matche && matche != null)) returnal = true;
+            foreach (var matcher in Rsscache.RSSCache.Where(matcher => matcher == matche && matche != null)) returnal = true;
             return returnal;
         }
 
@@ -105,7 +105,7 @@ namespace SharpIRC {
                         string[] tchans = xchans.Split(',');
                         foreach (string chan in tchans) newrss.Channels.Add(chan);
                         if (qmsg.Split(' ').Length > 5) {
-                            string rssmsg = Connect.JoinString(qmsg.Split(' '), 5, false);
+                            string rssmsg = Parser.JoinString(qmsg.Split(' '), 5, false);
                             newrss.Layout = rssmsg;
                         } else newrss.Layout = "RSS ~ %title% %link% @ %pubDate% ~";
                         MyRSS.RSS.Add(newrss);

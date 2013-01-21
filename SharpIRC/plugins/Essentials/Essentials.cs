@@ -49,17 +49,17 @@ namespace SharpIRC {
                 Commands.SendQuit(message.Connection, message.Connection.Configuration.QuitMessage);
                 var newcon = new IRCConnection {Configuration = message.Connection.Configuration};
                 Program.Connections.Add(newcon);
-                new Thread(() => Connect.ConnnectToNetwork(newcon)).Start();
+                new Thread(() => Parser.ConnnectToNetwork(newcon)).Start();
                 Program.Connections.Remove(message.Connection);
             }
             if (!message.Message.IsCommand("ignore")) return;
             if (message.Message.IsSubCommand("add") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "ignore add")) {
                 string newhost = message.Message.Split(' ')[2];
-                if (!newhost.Contains("@")) newhost = newhost.IRCUserFromString(message.Connection).Host;
+                if (!newhost.Contains("@")) newhost = "*!*@" + newhost.IRCUserFromString(message.Connection).Host;
                 var newIgnore = new IgnoredUser {
                     Added = DateTime.Now,
                     Host = newhost,
-                    Reason = Connect.JoinString(message.Message.Split(' '), 3, false)
+                    Reason = Parser.JoinString(message.Message.Split(' '), 3, false)
                 };
                 Program.IgnoreList.Ignores.Add(newIgnore);
                 ConfigurationAPI.SaveConfigurationFile(Program.IgnoreList, "Ignore");

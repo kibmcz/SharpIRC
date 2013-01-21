@@ -16,6 +16,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -45,7 +46,9 @@ namespace SharpIRC.API {
         /// <param name="msg">Original message.</param>
         /// <param name="cmd">Command to match with.</param>
         /// <returns></returns>
-        public static bool IsPMCommand(this string msg, string cmd) { return (String.Equals(msg.Split(' ')[0], cmd, StringComparison.OrdinalIgnoreCase)) ? true : false; }
+        public static bool IsPMCommand(this string msg, string cmd) {
+            return (String.Equals(msg.Split(' ')[0], cmd, StringComparison.OrdinalIgnoreCase));
+        }
 
         /// <summary>
         /// Searches for open IRC Connections to networks where the name matches the paramater. 
@@ -142,7 +145,7 @@ namespace SharpIRC.API {
         /// <param name="msg">The original message.</param>
         /// <returns>Message without command.</returns>
         public static string GetMessageWithoutCommand(this string msg) {
-            return (Connect.JoinString(msg.Split(' '), 1, false).Length > 0) ? Connect.JoinString(msg.Split(' '), 1, false) : null;
+            return (Parser.JoinString(msg.Split(' '), 1, false).Length > 0) ? Parser.JoinString(msg.Split(' '), 1, false) : null;
         }
 
         /// <summary>
@@ -151,7 +154,7 @@ namespace SharpIRC.API {
         /// <param name="msg">The original message.</param>
         /// <returns>Message without command and subcommand.</returns>
         public static string GetMessageWithoutSubCommand(this string msg) { 
-            return Connect.JoinString(msg.Split(' '), 2, false).Length > 0 ? Connect.JoinString(msg.Split(' '), 2, false) : null;
+            return Parser.JoinString(msg.Split(' '), 2, false).Length > 0 ? Parser.JoinString(msg.Split(' '), 2, false) : null;
         }
 
         /// <summary>
@@ -402,10 +405,7 @@ namespace SharpIRC.API {
         /// <param name="host">The full host (nick!ident@domain)</param>
         /// <returns>True if host is ignored</returns>
         public static bool IsIgnored(this string host) {
-            if (host.Contains("@")) host = host.Split('@')[1];
-            var exists = false;
-            foreach (var user in Program.IgnoreList.Ignores.Where(user => user.Host == host)) exists = true;
-            return exists;
+            return Program.IgnoreList.Ignores.Any(x => new Parser.Wildcard(x.Host).IsMatch(host));
         }
 
         /// <summary>
@@ -422,11 +422,16 @@ namespace SharpIRC.API {
         /// </summary>
         /// <param name="directory">Directory</param>
         public static void Empty(this DirectoryInfo directory) {
-            foreach (FileInfo file in directory.GetFiles()) file.Delete();
-            foreach (DirectoryInfo subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
+            foreach (var file in directory.GetFiles()) file.Delete();
+            foreach (var subDirectory in directory.GetDirectories()) subDirectory.Delete(true);
         }
 
-        
+        public static bool isCTCP(this string msg) {
+            return msg.StartsWith(((char)1).ToString(CultureInfo.InvariantCulture));
+        }
+        public static bool isCTCP(this string msg, string CTCP) {
+            return String.Equals(msg, ((char) 1) + CTCP);
+        }
     }
 
     /// <summary>

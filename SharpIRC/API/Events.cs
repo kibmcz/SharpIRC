@@ -88,7 +88,7 @@ namespace SharpIRC.API {
             var newUser = new IRCUser {Host = host, Level = UserLevel.Normal, Nick = Functions.NickFromHost(host), RealName = ""};
 
             var newMsg = new CTCPMessage
-            {Connection = connection, Sender = newUser, Prefix = message.Split(' ')[0].Substring(0, message.Split(' ')[0].Length - 1), Message = Connect.JoinString(message.Split(' '), 1, false), Type = MessageTypes.CTCP};
+            {Connection = connection, Sender = newUser, Prefix = message.Split(' ')[0].Substring(0, message.Split(' ')[0].Length - 1), Message = Parser.JoinString(message.Split(' '), 1, false), Type = MessageTypes.CTCP};
             foreach (PluginInterface plugin in Program.Plugins) {
                 try {
                     plugin.CTCP(newMsg);
@@ -103,7 +103,6 @@ namespace SharpIRC.API {
             var newUser = new IRCUser {Host = host, Level = UserLevel.Normal, Nick = Functions.NickFromHost(host), RealName = ""};
 
             var newMsg = new PrivateMessage {Connection = connection, Sender = newUser, Message = message, Type = MessageTypes.NOTICE};
-            
             foreach (PluginInterface plugin in Program.Plugins) {
                 try {
                     plugin.Notice(newMsg);
@@ -118,10 +117,10 @@ namespace SharpIRC.API {
 
         internal void ChanNotice(IRCConnection connection, string message, string host, string channel) {
             if (host.IsIgnored() || connection.DelayActive) return;
-            IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
+            var newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
 
             var newMsg = new ChannelMessage { Channel = connection.GetChannelByName(channel), Connection = connection, Sender = newUser, Message = message, Type = MessageTypes.NOTICE };
-            foreach (PluginInterface plugin in Program.Plugins) {
+            foreach (var plugin in Program.Plugins) {
                 try {
                     plugin.ChanNotice(newMsg);
                 } catch (Exception e) {
@@ -134,7 +133,7 @@ namespace SharpIRC.API {
             if (host.IsIgnored()) return;
             var newUser = new IRCUser {Host = host, Level = UserLevel.Normal, Nick = Functions.NickFromHost(host), RealName = ""};
 
-            var newMsg = new CTCPMessage {Connection = connection, Sender = newUser, Prefix = message.Split(' ')[0], Message = Connect.JoinString(message.Split(' '), 1, false), Type = MessageTypes.CTCPREPLY};
+            var newMsg = new CTCPMessage {Connection = connection, Sender = newUser, Prefix = message.Split(' ')[0], Message = Parser.JoinString(message.Split(' '), 1, false), Type = MessageTypes.CTCPREPLY};
             foreach (PluginInterface plugin in Program.Plugins) {
                 try {
                     plugin.CTCPREPLY(newMsg);

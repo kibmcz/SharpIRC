@@ -31,15 +31,15 @@ namespace SharpIRC {
 
         public bool Passfilter(string message) {
             bool passfilter = true;
-            foreach (Connect.Wildcard wcard in lovefilter.wildcards.Select(wildcard => new Connect.Wildcard(wildcard, RegexOptions.IgnoreCase)).Where(wcard => wcard.IsMatch(message))) passfilter = false;
+            foreach (Parser.Wildcard wcard in lovefilter.wildcards.Select(wildcard => new Parser.Wildcard(wildcard, RegexOptions.IgnoreCase)).Where(wcard => wcard.IsMatch(message))) passfilter = false;
             return passfilter;
         }
 
         public string Matchpreset(string lovenick1, string lovenick2) {
             string passfilter = null;
             foreach (Preset pset in from pset in lovefilter.presets
-                let wcard = new Connect.Wildcard(pset.Nick1, RegexOptions.IgnoreCase)
-                let wcard1 = new Connect.Wildcard(pset.Nick2, RegexOptions.IgnoreCase)
+                let wcard = new Parser.Wildcard(pset.Nick1, RegexOptions.IgnoreCase)
+                let wcard1 = new Parser.Wildcard(pset.Nick2, RegexOptions.IgnoreCase)
                 where wcard.IsMatch(lovenick1) && wcard1.IsMatch(lovenick2)
                 select pset) passfilter = pset.Love.ToString();
             return passfilter;
