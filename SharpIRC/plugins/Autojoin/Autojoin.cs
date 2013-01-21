@@ -32,7 +32,10 @@ namespace SharpIRC {
             if (message.Message.IsCommand("autojoin") && message.Sender.hasCommandPermission(message.Connection, message.Channel, "autojoin")) {
                 string chantoAdd = message.Message.GetMessageWithoutSubCommand().ToLower();
                 if (message.Message.IsSubCommand("add")) {
-                    if (autojoin.Networks.Count(net => net.ID == message.Connection.Configuration.ID) > 0) foreach (AutoJoinNetwork net in autojoin.Networks.Where(net => net.ID == message.Connection.Configuration.ID)) net.Channels.Add(chantoAdd);
+                    if (autojoin.Networks.Count(net => net.ID == message.Connection.Configuration.ID) == message.Connection.MaxChannels) {
+                        Commands.SendNotice(message.Connection, message.Sender.Nick, "Request unsuccessful: You have reached the channel limit for this server (" + message.Connection.MaxChannels + ").");
+                    }
+                    if (autojoin.Networks.Count(net => net.ID == message.Connection.Configuration.ID) > 0) foreach (var net in autojoin.Networks.Where(net => net.ID == message.Connection.Configuration.ID)) net.Channels.Add(chantoAdd);
                     else {
                         var newnet = new AutoJoinNetwork {ID = message.Connection.Configuration.ID};
                         newnet.Channels.Add(chantoAdd);
@@ -51,11 +54,12 @@ namespace SharpIRC {
                         } else Commands.SendNotice(message.Connection, message.Sender.Nick, "Deletion was unsucessful, channel was not found.");
                     }
                 }
-                if (!message.Message.IsSubCommand("list")) return;
-                foreach (AutoJoinNetwork net in autojoin.Networks.Where(net => net.ID == message.Connection.Configuration.ID)) {
-                    Commands.SendNotice(message.Connection, message.Sender.Nick, "Listing all channels in autojoin for " + message.Connection.ActiveNetwork);
-                    foreach (string chan in net.Channels) Commands.SendNotice(message.Connection, message.Sender.Nick, chan);
-                    Commands.SendNotice(message.Connection, message.Sender.Nick, "Autojoin listing complete.");
+                if (message.Message.IsSubCommand("list")) {
+                    foreach (AutoJoinNetwork net in autojoin.Networks.Where(net => net.ID == message.Connection.Configuration.ID)) {
+                        Commands.SendNotice(message.Connection, message.Sender.Nick, "Listing all channels in autojoin for " + message.Connection.ActiveNetwork);
+                        foreach (string chan in net.Channels) Commands.SendNotice(message.Connection, message.Sender.Nick, chan);
+                        Commands.SendNotice(message.Connection, message.Sender.Nick, "Autojoin listing complete.");
+                    }
                 }
             }
         }
