@@ -64,22 +64,20 @@ namespace SharpIRC {
             return modelist;
         }
         public static void LogError(string error) {
-            FileStream fs = File.Open(Path.Combine(Program.StartupPath, "ErrorLog.txt"), FileMode.Append, FileAccess.Write);
-            var sw = new StreamWriter(fs, Encoding.UTF8);
-            sw.WriteLine("---------------[" + DateTime.Now.ToString("MM/dd/yy HH:mm:ss zz") + "]---------------");
-            sw.WriteLine(error);
-            sw.WriteLine();
-            sw.Close();
-            fs.Close();
-            if (Program.Configuration.LogComments) {
-                string makePath = Path.Combine(Program.StartupPath, "Logs");
-                if (!Directory.Exists(makePath)) Directory.CreateDirectory(makePath);
-                makePath = Path.Combine(makePath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
-                fs = File.Open(makePath, FileMode.Append, FileAccess.Write);
-                sw = new StreamWriter(fs, Encoding.UTF8);
-                sw.WriteLine("[" + DateTime.Now.ToString("M HH:mm:ss") + "] ERROR: " + error);
-                sw.Close();
-                fs.Close();
+            try {
+                if (Program.Configuration.LogComments) {
+                    var makePath = Path.Combine(Program.StartupPath, "Log");
+                    if (!Directory.Exists(makePath)) Directory.CreateDirectory(makePath);
+                    makePath = Path.Combine(makePath, DateTime.Now.ToString("yyyy-MM-dd") + ".txt");
+                    var fs = File.Open(makePath, FileMode.Append, FileAccess.Write);
+                    var sw = new StreamWriter(fs, Encoding.UTF8);
+                    sw.WriteLine("[" + DateTime.Now.ToString("M HH:mm:ss") + "] ERROR: " + error);
+                    sw.Close();
+                    fs.Close();
+                }
+            }
+            catch (Exception ex) {
+                Program.OutputConsole("An error occurred attempting to log an error:\n" + ex.GetBaseException(), ConsoleMessageType.Error);
             }
         }
         public static void AssertUModes(IRCConnection connection, string umodes) {

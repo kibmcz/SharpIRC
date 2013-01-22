@@ -41,5 +41,5 @@ using Mono.Addins;
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("0.1.1.44601")]
 
-[assembly: AssemblyVersion("0.1.0.44703")]
-[assembly: AssemblyFileVersion("0.1.0.44703")]
+[assembly: AssemblyVersion("0.1.0.44704")]
+[assembly: AssemblyFileVersion("0.1.0.44704")]

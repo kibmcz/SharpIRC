@@ -183,11 +183,11 @@ namespace SharpIRC {
             }
 
             foreach (var attribute in AppDomain.CurrentDomain.GetAssemblies().SelectMany(assembly => assembly.GetCustomAttributes(typeof(PluginInfoAttribute), false).Cast<PluginInfoAttribute>())) {
-                Program.OutputConsole(String.Format("Loaded Plugin: \"{0}\" by {1}. Version: {2} ", attribute.Name, attribute.Author, attribute.Version), ConsoleMessageType.Normal);
+                OutputConsole(String.Format("Loaded Plugin: \"{0}\" by {1}. Version: {2} ", attribute.Name, attribute.Author, attribute.Version), ConsoleMessageType.Normal);
             }
             if (Plugins.Count == 0) {
-                Program.OutputConsole("No plugins were loaded, this means vital ressources are missing and the application may not operate properly. Are you sure you want to continue? (Y/N)", ConsoleMessageType.Warning);
-                string ch = "";
+                OutputConsole("No plugins were loaded, this means vital ressources are missing and the application may not operate properly. Are you sure you want to continue? (Y/N)", ConsoleMessageType.Warning);
+                var ch = "";
                 while (!String.Equals((ch = Console.ReadLine()), "y", StringComparison.OrdinalIgnoreCase)) {
                     if (String.Equals(ch, "n", StringComparison.OrdinalIgnoreCase)) {
                         Environment.Exit(0);

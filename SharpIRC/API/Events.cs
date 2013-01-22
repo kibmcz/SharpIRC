@@ -213,8 +213,8 @@ namespace SharpIRC.API {
 
         internal void Kick(IRCConnection connection, string host, string channel, string kicked, string message) {
             IRCUser newUser = Functions.NickFromHost(host).IRCUserFromString(connection.GetChannelByName(channel));
-
-            var recieveUser = new IRCUser {Host = "", Level = UserLevel.Normal, Nick = kicked, RealName = ""};
+            var recieveUser = kicked.IRCUserFromString(connection);
+            if (recieveUser.Nick == connection.CurrentNick) Commands.SendJoin(connection, channel);
             var newMsg = new KickMessage { Connection = connection, Sender = newUser, Reciever = recieveUser, Message = message, Channel = connection.GetChannelByName(channel), Type = MessageTypes.KICK };
 
             if (newMsg.Sender != null) Functions.LogHistory(connection.ActiveNetwork, newMsg.Channel.Name, String.Format("- {0} has kicked {1} ({2})", newMsg.Sender.Nick, newMsg.Reciever.Nick, newMsg.Message));
