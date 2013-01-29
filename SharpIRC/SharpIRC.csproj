@@ -59,6 +59,16 @@
   <PropertyGroup>
     <StartupObject>SharpIRC.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'SharpIRC %28Developer%29|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\SharpIRC %28Developer%29\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <WarningLevel>3</WarningLevel>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Mono.Addins">
       <HintPath>..\Libraries\Mono.Addins.dll</HintPath>
@@ -147,7 +157,7 @@
     </VisualStudio>
   </ProjectExtensions>
   <UsingTask TaskName="HgVersionFile" AssemblyFile="..\Libraries\MSBuildVersioning.dll" />
-  <Target Name="BeforeBuild">
+  <Target Name="BeforeBuild" Condition="'$(Configuration)|$(Platform)' == 'SharpIRC %28Developer%29|AnyCPU'">
     <HgVersionFile TemplateFile="Properties\VersionInfo.base.cs" DestinationFile="Properties\VersionInfo.cs" />
   </Target>
   <Target Name="AfterBuild">
