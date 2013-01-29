@@ -51,6 +51,11 @@ namespace SharpIRC {
         public static string Version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
 
         /// <summary>
+        /// Mercurial Revision Information for the current changeset as the application was compiled.
+        /// </summary>
+        public static ChangesetAttribute Revision = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(ChangesetAttribute), false).Cast<ChangesetAttribute>().First();
+
+        /// <summary>
         /// A List of plugins currently loaded in the bot.
         /// </summary>
         public static List<PluginInterface> Plugins = new List<PluginInterface>();
@@ -275,4 +280,5 @@ namespace SharpIRC {
             Console.ForegroundColor = ConsoleColor.White;
         }
     }
+
 }

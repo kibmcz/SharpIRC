@@ -4,5 +4,11 @@
     <Command Name="uptime">
       <Permissions Type="Normal" />
     </Command>
+    <Command Name="version">
+      <Permissions Type="Normal" />
+    </Command>
+    <Command Name="load">
+      <Permissions Type="Normal" />
+    </Command>
   </Commands>
 </PermissionIndex>

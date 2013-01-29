@@ -102,6 +102,7 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Ignores.cs" />
+    <Compile Include="Properties\VersionInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\sharpirc.config">
@@ -145,11 +146,10 @@
       <UserProperties BuildVersion_AssemblyInfoFilename="Properties\AssemblyInfo.cs" BuildVersion_BuildVersioningStyle="None.None.None.DeltaBaseDate" BuildVersion_UpdateAssemblyVersion="True" BuildVersion_UpdateFileVersion="True" />
     </VisualStudio>
   </ProjectExtensions>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
+  <UsingTask TaskName="HgVersionFile" AssemblyFile="..\Libraries\MSBuildVersioning.dll" />
   <Target Name="BeforeBuild">
+    <HgVersionFile TemplateFile="Properties\VersionInfo.base.cs" DestinationFile="Properties\VersionInfo.cs" />
   </Target>
   <Target Name="AfterBuild">
   </Target>
-  -->
 </Project>
