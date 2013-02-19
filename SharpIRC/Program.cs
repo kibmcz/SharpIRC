@@ -275,6 +275,11 @@ namespace SharpIRC {
                     System.Media.SystemSounds.Beep.Play();
                     Functions.LogError(message);
                     break;
+                case ConsoleMessageType.SilentError:
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    System.Media.SystemSounds.Beep.Play();
+                    Functions.LogError(message);
+                    break;
             }
             Console.WriteLine(message);
             Console.ForegroundColor = ConsoleColor.White;

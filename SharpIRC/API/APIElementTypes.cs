@@ -711,6 +711,10 @@ namespace SharpIRC.API {
         /// <summary>
         /// Error
         /// </summary>
-        Error
+        Error,
+        /// <summary>
+        /// Error - No logging.
+        /// </summary>
+        SilentError
     }
 }

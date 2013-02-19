@@ -246,12 +246,12 @@ namespace SharpIRC {
                 Reconnect(connection);
             }
             catch (SocketException ex) {
-                Program.OutputConsole("Connection Failed: " + ex.Message, ConsoleMessageType.Error);
+                Program.OutputConsole("Connection Failed: " + ex.Message, ConsoleMessageType.SilentError);
+                Functions.LogError(ex.GetBaseException());
                 Reconnect(connection);
             }
             catch (Exception ex) {
-                Program.OutputConsole(ex.Source + ": " + ex.Message, ConsoleMessageType.Error);
-                Functions.LogError(ex.GetBaseException().ToString());
+                Program.OutputConsole(ex.GetBaseException().ToString(), ConsoleMessageType.Error);
             }
         }
 
@@ -333,7 +333,7 @@ namespace SharpIRC {
             Program.OutputConsole("SSL Certificate Error: " + sslPolicyErrors, ConsoleMessageType.Error);
 
             // Do not allow this client to communicate with unauthenticated servers. 
-            return false;
+            return false;   
         }
 
         #region Nested type: Wildcard

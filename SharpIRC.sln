@@ -45,11 +45,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Help", "SharpIRC\plugins\He
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sysinfo", "SharpIRC\plugins\Uptime\Sysinfo.csproj", "{460073A2-6D41-42CF-9971-9A4F5A88ED67}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{E2D119D3-A34A-4C83-AAD4-57CAD329247A}"
-	ProjectSection(SolutionItems) = preProject
-		connect.cs = connect.cs
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gtalk", "SharpIRC\plugins\Gtalk\Gtalk.csproj", "{8F9243A9-406D-4295-A00E-D7E2577CB6B2}"
 EndProject
 Global
@@ -217,9 +212,9 @@ Global
 		{8F9243A9-406D-4295-A00E-D7E2577CB6B2} = {0ABD085B-03F5-4718-BEE6-BCF42C150BFF}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		BuildVersion_UpdateFileVersion = False
-		BuildVersion_UpdateAssemblyVersion = False
 		BuildVersion_BuildVersioningStyle = None.None.None.None
+		BuildVersion_UpdateAssemblyVersion = False
+		BuildVersion_UpdateFileVersion = False
 	EndGlobalSection
 	GlobalSection(SubversionScc) = preSolution
 		Manager = AnkhSVN - Subversion Support for Visual Studio

@@ -110,7 +110,7 @@ namespace SharpIRC {
         public override void CTCP(CTCPMessage message)
         {
             switch (message.Prefix) {
-                case "VERSION": Commands.SendCTCPReply(message.Connection, message.Sender.Nick, String.Format("VERSION SharpIRC IRC Bot v.{0} -  Changeset: ~{1} - Branch: {2} http://sharpirc.codeplex.com/", Program.Version, Program.Revision.RevisionID, Program.Revision.Branch));
+                case "VERSION": Commands.SendCTCPReply(message.Connection, message.Sender.Nick, String.Format("SharpIRC IRC Bot v.{0} -  Changeset: http://sharpirc.codeplex.com/SourceControl/changeset/{1} - Branch: {2}  -  http://sharpirc.codeplex.com/", Program.Version, Program.Revision.RevisionID, Program.Revision.Branch));
                     break;
                 case "TIME": Commands.SendCTCPReply(message.Connection, message.Sender.Nick, String.Format("TIME {0}", DateTime.Now));
                     break;
