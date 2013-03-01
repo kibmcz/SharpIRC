@@ -690,6 +690,7 @@ namespace SharpIRC.API {
         /// The user.
         /// </summary>
         public Admin User { get; set; }
+
     }
 
     /// <summary>

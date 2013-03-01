@@ -50,7 +50,7 @@ namespace SharpIRC
             }
         }
         public override void ChanMsg(ChannelMessage message)  {
-            if (message.Message.IsCommand("help")) Commands.SendPrivMsg(message.Connection, message.Channel, String.Format("You may reach my help system via \"/msg {0} HELP", message.Connection.CurrentNick));
+            if (message.Message.IsCommand("help")) Commands.SendPrivMsg(message.Connection, message.Channel, String.Format("You may reach my help system via \"/msg {0} HELP\"", message.Connection.CurrentNick));
         }
         public override void PrivMsg(PrivateMessage message) {
             if (message.Message.IsPMCommand("help")) {

@@ -1,7 +1,7 @@
 using System;
 using System.Reflection;
-[assembly: AssemblyVersion("0.1.27.1")]
-[assembly: ChangesetAttribute("27", "d29de5690382", "default")]
+[assembly: AssemblyVersion("0.1.28.1")]
+[assembly: ChangesetAttribute("28", "d4d83f5d9eff", "default")]
 
 [AttributeUsage(AttributeTargets.Assembly)]
 public class ChangesetAttribute : Attribute {
